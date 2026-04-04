@@ -175,6 +175,59 @@ redItems.forEach((item) => {
 });
 });
 
+// 8. 동상 마커 생성 (이미지 포함)
+statues.forEach((st) => {
+    const pos = mcToPx(st.x, st.z);
+    // 스폰 지점과 같은 나침반 아이콘 사용 (또는 원하는 아이콘으로 변경 가능)
+    const marker = L.marker(pos, { icon: compassIcon }).addTo(map);
+
+    const popupContent = `
+        <div style="text-align:center; min-width:200px; color:#000; padding: 0;">
+            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">
+                ${st.name}
+            </div>
+            <div style="background:#333; border-radius:4px; padding: 5px 0; margin-bottom: 10px; cursor:pointer;" 
+                 onclick="copyCoords(${st.x}, ${st.y}, ${st.z})">
+                <div style="color:#FFD700; font-size:15px; font-weight:700;">${st.x}, ${st.y}, ${st.z}</div>
+                <div style="color:#aaa; font-size:9px;">(클릭하여 좌표 복사)</div>
+            </div>
+            <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
+                <img src="images/${st.file}" 
+                     style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" 
+                     onclick="window.open('images/${st.file}', '_blank')">
+            </div>
+        </div>
+    `;
+    marker.bindPopup(popupContent, { autoPan: false, keepInView: true });
+});
+
+// 9. 비석(산) 마커 생성 (stone.png 사용)
+const stoneIcon = L.icon({
+    iconUrl: 'images/stone.png',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -10]
+});
+
+mountains.forEach((mt) => {
+    const pos = mcToPx(mt.x, mt.z);
+    const marker = L.marker(pos, { icon: stoneIcon }).addTo(map);
+
+    const popupContent = `
+        <div style="text-align:center; min-width:180px; color:#000; padding: 0;">
+            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">
+                ${mt.name}
+            </div>
+            <div style="background:#333; border-radius:4px; padding: 8px 0; cursor:pointer;" 
+                 onclick="copyCoords(${mt.x}, ${mt.y}, ${mt.z})">
+                <div style="color:#FFD700; font-size:15px; font-weight:700;">${mt.x}, ${mt.y}, ${mt.z}</div>
+                <div style="color:#aaa; font-size:10px; margin-top:3px;">(클릭하여 좌표 복사)</div>
+            </div>
+        </div>
+    `;
+    marker.bindPopup(popupContent, { autoPan: false, keepInView: true });
+});
+
 map.on('popupopen', function(e) {
     const popup = e.popup;
     const container = popup._container;
