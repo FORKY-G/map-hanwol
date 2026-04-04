@@ -293,8 +293,10 @@ huntingGrounds.forEach((area) => {
     layers.hunting[area.name] = overlay;
 
     // 2. 아코디언 메뉴 내부에 체크박스 생성 (초기 체크 해제 상태)
+    // [14] 사냥터 영역 생성 루프 내부
     const label = document.createElement('label');
     label.className = 'control-item';
+    // input에 checked 속성을 넣지 않습니다.
     label.innerHTML = `<input type="checkbox" id="hunt-${area.name}"> ${area.name}`;
     huntingListContainer.appendChild(label);
 
