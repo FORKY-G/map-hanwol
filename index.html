@@ -156,11 +156,12 @@
     <script src="js/ui-control.js"></script>   
 
     <script>
-        // [수정] 위아래 펼치기(Slide) 로직
+        <script>
         const sidebar = document.getElementById('controls');
         const toggleBtn = document.getElementById('toggle-sidebar');
 
-        toggleBtn.addEventListener('click', function() {
+        // 메뉴 열기/닫기 공용 함수
+        function toggleSidebar() {
             sidebar.classList.toggle('active');
             
             if (sidebar.classList.contains('active')) {
@@ -168,9 +169,28 @@
             } else {
                 toggleBtn.innerText = '▼ 한월메뉴 열기';
             }
+        }
+
+        // 1. 버튼 클릭 시 토글
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 버튼 클릭 시 지도 클릭 이벤트가 동시에 일어나는 것 방지
+            toggleSidebar();
         });
 
-        // 사냥터 아코디언 유지
+        // 2. [추가] 지도 클릭 시 메뉴가 열려있다면 자동으로 닫기
+        map.on('click', function() {
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                toggleBtn.innerText = '▼ 한월메뉴 열기';
+            }
+        });
+
+        // 3. 메뉴 창 내부를 클릭할 때는 닫히지 않게 보호
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation(); 
+        });
+
+        // 사냥터 아코디언 로직 유지
         document.getElementById('hunt-accordion-btn').addEventListener('click', function() {
             const content = document.getElementById('hunt-accordion-content');
             content.classList.toggle('active');
