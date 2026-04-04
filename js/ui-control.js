@@ -30,6 +30,13 @@ const stone2Icon = L.icon({
     popupAnchor: [0, -15] // 팝업 위치 조정
 });
 
+const potIcon = L.icon({
+    iconUrl: 'images/pot.png',
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -15]
+});
+
 // [2] 십이지신 동선 설정
 const animalPathPoints = animals.map(ani => mcToPx(ani.mcX, ani.mcZ));
 const polyline = L.polyline(animalPathPoints, {
@@ -200,6 +207,44 @@ mountains.forEach((mt) => {
         </div>
     `;
     marker.bindPopup(popupContent, { autoPan: false, keepInView: true });
+});
+
+// [11] 항아리 마커 생성
+potItems.forEach((pot) => {
+    const pos = mcToPx(pot.x, pot.z);
+    const marker = L.marker(pos, { icon: potIcon }).addTo(map);
+
+    const popupContent = `
+        <div style="text-align:center; min-width:200px; color:#000; padding: 0; line-height: 1.3;">
+            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">
+                ${pot.name}
+            </div>
+            
+            <div style="background:#333; border-radius:4px; padding: 6px 0; margin-bottom: 10px; cursor:pointer;" 
+                 onclick="copyCoords(${pot.x}, ${pot.y}, ${pot.z})">
+                <div style="color:#FFD700; font-size:15px; font-weight:700;">
+                    ${pot.x}, ${pot.y}, ${pot.z}
+                </div>
+                <div style="color:#aaa; font-size:9px; margin-top: 2px;">(클릭하여 좌표 복사)</div>
+            </div>
+
+            <div style="font-size:13px; color:#333; letter-spacing:-0.4px; border-top:1px solid #aaa; padding-top: 8px;">
+                <div style="margin-bottom: 4px;">
+                    <span style="font-weight:800; color:#d00;">필요도구:</span> ${pot.tool}
+                </div>
+                <div style="font-weight:700;">
+                    <span style="color:#666;">획득아이템:</span> ${pot.item}
+                </div>
+            </div>
+        </div>
+    `;
+
+    marker.bindPopup(popupContent, {
+        autoPan: false,
+        keepInView: true,
+        closeButton: false,
+        offset: L.point(0, -5)
+    });
 });
 
 // [11] 잘림 방지 보정 스크립트
