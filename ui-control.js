@@ -8,10 +8,10 @@ const spawnIcon = L.icon({
     shadowSize: [41, 41]
 });
 
-// data.js의 스폰 좌표를 화면 픽셀로 변환
+// 좌표 변환
 const spawnCoords = mcToPx(spawnData.mcX, spawnData.mcZ);
 
-// 지도에 마커를 올리고 클릭 시 말풍선(Popup) 띄우기
+// 지도에 마커를 올리고 클릭 시 말풍선에 이름만 띄우기
 L.marker(spawnCoords, { icon: spawnIcon })
     .addTo(map)
-    .bindPopup(`<b>${spawnData.name}</b><br>${spawnData.description}<br><small>X: ${spawnData.mcX}, Z: ${spawnData.mcZ}</small>`);
+    .bindPopup(spawnData.name); // 잡다한 설명과 좌표를 모두 지웠습니다!
