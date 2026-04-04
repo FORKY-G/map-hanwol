@@ -339,7 +339,7 @@ huntingGrounds.forEach((area) => {
             layers.huntingMarkers[area.name].addTo(map);
 
             // [심화] 부드러운 이동 및 확대
-            map.flyTo(targetPos, 1, {
+            map.flyTo(targetPos, 0.5, {
                 animate: true,
                 duration: 1.0
             });
