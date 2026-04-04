@@ -175,11 +175,11 @@ redItems.forEach((item) => {
 });
 });
 
-// 8. 동상 마커 생성 (이미지 포함)
+// 8. 동상 마커 생성 (비석과 동일한 stoneIcon 사용)
 statues.forEach((st) => {
     const pos = mcToPx(st.x, st.z);
-    // 스폰 지점과 같은 나침반 아이콘 사용 (또는 원하는 아이콘으로 변경 가능)
-    const marker = L.marker(pos, { icon: compassIcon }).addTo(map);
+    // compassIcon 대신 stoneIcon을 사용합니다.
+    const marker = L.marker(pos, { icon: stoneIcon }).addTo(map);
 
     const popupContent = `
         <div style="text-align:center; min-width:200px; color:#000; padding: 0;">
@@ -195,6 +195,7 @@ statues.forEach((st) => {
                 <img src="images/${st.file}" 
                      style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" 
                      onclick="window.open('images/${st.file}', '_blank')">
+                <div style="font-size:9px; color:#666; margin-top:2px;">▲ 클릭 시 확대</div>
             </div>
         </div>
     `;
