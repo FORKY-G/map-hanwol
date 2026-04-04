@@ -184,8 +184,37 @@ const stoneIcon = L.icon({
     popupAnchor: [0, -10]
 });
 
-// 9. 동상 마커 생성
-statues.forEach((st) => {
+// 9. 동상 마커 생성 (한월동상 수동 고정 + 나머지 자동 생성)
+
+// [A] 한월동상 전용: 이미지 좌표(1278, 1246)에 강제 고정
+const hanwolManual = statues.find(st => st.name === "한월동상");
+if (hanwolManual) {
+    const hanwolPos = [(7300 - 1246), 1278]; // [Y픽셀, X픽셀] 수동 계산
+    const hMarker = L.marker(hanwolPos, { icon: stoneIcon }).addTo(map);
+
+    const hPopupContent = `
+        <div style="text-align:center; min-width:200px; color:#000; padding: 0;">
+            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">
+                ${hanwolManual.name}
+            </div>
+            <div style="background:#333; border-radius:4px; padding: 5px 0; margin-bottom: 10px; cursor:pointer;" 
+                 onclick="copyCoords(${hanwolManual.x}, ${hanwolManual.y}, ${hanwolManual.z})">
+                <div style="color:#FFD700; font-size:15px; font-weight:700;">${hanwolManual.x}, ${hanwolManual.y}, ${hanwolManual.z}</div>
+                <div style="color:#aaa; font-size:9px;">(클릭하여 좌표 복사)</div>
+            </div>
+            <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
+                <img src="images/${hanwolManual.file}" 
+                     style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" 
+                     onclick="window.open('images/${hanwolManual.file}', '_blank')">
+                <div style="font-size:9px; color:#666; margin-top:2px;">▲ 클릭 시 확대</div>
+            </div>
+        </div>
+    `;
+    hMarker.bindPopup(hPopupContent, { autoPan: false, keepInView: true });
+}
+
+// [B] 나머지 동상들: 기존 마크 좌표 계산 방식 유지 (filter 사용)
+statues.filter(st => st.name !== "한월동상").forEach((st) => {
     const pos = mcToPx(st.x, st.z);
     const marker = L.marker(pos, { icon: stoneIcon }).addTo(map);
 
