@@ -22,6 +22,49 @@
             align-items: flex-end;
         }
 
+        /* 검색창 컨테이너 */
+        #search-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        #search-input {
+            width: 180px;
+            padding: 6px 10px;
+            border: 2px solid #000;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 700;
+            outline: none;
+        }
+
+        /* 검색 결과 드롭다운 목록 */
+        #search-results {
+            position: absolute;
+            top: 40px; right: 0;
+            width: 240px;
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1002;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .search-result-item:hover { background: #f0f0f0; }
+        .search-result-item .category { font-size: 10px; color: #888; display: block; }
+
         /* 메뉴 열기/닫기 버튼 */
         #toggle-sidebar {
             background: #fff;
@@ -83,11 +126,18 @@
     <div id="copy-toast">복사 완료!</div>
 
     <div id="controls-wrapper">
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="정보 및 위치 검색...">
+            <div id="search-results"></div> </div>
+
         <div id="toggle-sidebar">▼ 한월메뉴 열기</div>
+        
         <div id="controls">
             <div class="control-header">
                 <h3 class="control-title">한월서버</h3>
             </div>
+            </div>
+    </div>
             
             <div class="control-group">
                 <label class="control-item">
@@ -184,6 +234,20 @@
                     sidebar.classList.remove('active');
                     toggleBtn.innerText = '▼ 한월메뉴 열기';
                 }
+            });
+        }
+
+        // [4] 지도 클릭 시 메뉴 및 검색창 자동 닫기
+        if (typeof map !== 'undefined') {
+            map.on('click', function() {
+                // 메뉴 닫기
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    toggleBtn.innerText = '▼ 한월메뉴 열기';
+                }
+                // [추가] 검색 결과창 닫기
+                const searchResults = document.getElementById('search-results');
+                if (searchResults) searchResults.style.display = 'none';
             });
         }
 
