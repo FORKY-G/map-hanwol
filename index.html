@@ -206,9 +206,11 @@
     <script src="js/ui-control.js"></script>   
 
     <script>
+        <script>
+        // [1] 요소 가져오기 (변수 선언은 여기서 딱 한 번만 합니다)
         const sidebar = document.getElementById('controls');
         const toggleBtn = document.getElementById('toggle-sidebar');
-        const searchResults = document.getElementById('search-results');
+        const searchResultsDiv = document.getElementById('search-results'); // 이름을 살짝 바꿔서 충돌 방지
 
         // [2] 메뉴 열기/닫기 함수
         function toggleSidebar() {
@@ -229,16 +231,22 @@
         // [4] 지도 클릭 시 메뉴 및 검색창 자동 닫기
         if (typeof map !== 'undefined') {
             map.on('click', function() {
+                // 메뉴 닫기
                 if (sidebar.classList.contains('active')) {
                     sidebar.classList.remove('active');
                     toggleBtn.innerText = '▼ 한월메뉴 열기';
                 }
-                if (searchResults) searchResults.style.display = 'none';
+                // 검색 결과창 닫기
+                if (searchResultsDiv) {
+                    searchResultsDiv.style.display = 'none';
+                }
             });
         }
 
         // [5] 메뉴 내부 클릭 시 닫힘 방지
-        sidebar.addEventListener('click', function(e) { e.stopPropagation(); });
+        sidebar.addEventListener('click', function(e) { 
+            e.stopPropagation(); 
+        });
 
         // [6] 사냥터 아코디언 토글
         const accordionBtn = document.getElementById('hunt-accordion-btn');
