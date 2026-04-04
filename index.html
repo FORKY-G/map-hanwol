@@ -124,53 +124,42 @@
     <div id="controls">
         <div class="control-title">지도 필터</div>
         
-        <div class="control-group">
-            <div class="control-item"><img src="images/compass.png"> 스폰 (고정)</div>
-            <div class="control-item"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" style="border:1px solid #aaa;"> 십이지신 (고정)</div>
-        </div>
+       <div class="control-group">
+    <label class="control-item">
+        <input type="checkbox" id="check-stones"> <img src="images/stone.png"> 산/동상
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="check-npc"> <img src="forky.png"> NPC
+    </label>
+</div>
 
-        <div class="divider"></div>
+<div class="control-group">
+    <label class="control-item">
+        <input type="checkbox" id="check-red"> <img src="images/red.png"> 적환단
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="check-pot"> <img src="images/pot.png"> 탐색(항아리)
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="check-box"> <img src="images/box.png"> 의문의 상자
+    </label>
+</div>
 
-        <div class="control-group">
-            <label class="control-item">
-                <input type="checkbox" id="check-stones" checked> <img src="images/stone.png"> 산/동상
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="check-npc" checked> <img src="forky.png"> NPC
-            </label>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="control-group">
-            <label class="control-item">
-                <input type="checkbox" id="check-red" checked> <img src="images/red.png"> 적환단
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="check-pot" checked> <img src="images/pot.png"> 탐색(항아리)
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="check-box" checked> <img src="images/box.png"> 의문의 상자
-            </label>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="control-group">
-            <div style="font-weight: 900; margin-bottom: 8px; font-size: 13px;">광산 구역</div>
-            <label class="control-item">
-                <input type="checkbox" id="mine-녹" checked> <div class="color-dot" style="background:#2ecc71;"></div> 녹색광산
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="mine-청" checked> <div class="color-dot" style="background:#3498db;"></div> 청색광산
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="mine-황" checked> <div class="color-dot" style="background:#f1c40f;"></div> 황색광산
-            </label>
-            <label class="control-item">
-                <input type="checkbox" id="mine-적" checked> <div class="color-dot" style="background:#e74c3c;"></div> 적색광산
-            </label>
-        </div>
+<div class="control-group">
+    <div style="font-weight: 900; margin-bottom: 8px; font-size: 13px;">광산 구역</div>
+    <label class="control-item">
+        <input type="checkbox" id="mine-녹"> <div class="color-dot" style="background:#2ecc71;"></div> 녹색광산
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="mine-청"> <div class="color-dot" style="background:#3498db;"></div> 청색광산
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="mine-황"> <div class="color-dot" style="background:#f1c40f;"></div> 황색광산
+    </label>
+    <label class="control-item">
+        <input type="checkbox" id="mine-적"> <div class="color-dot" style="background:#e74c3c;"></div> 적색광산
+    </label>
+</div>
 
         <div class="control-group">
             <div class="accordion-header" id="hunt-accordion-btn">
