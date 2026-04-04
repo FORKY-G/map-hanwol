@@ -6,8 +6,8 @@ const map = L.map('map', {
 });
 
 // 2. 픽셀크기
-const imgWidth = 4560;  // 가로
-const imgHeight = 4560; // 세로
+const imgWidth = 7300;  // 가로
+const imgHeight = 7300; // 세로
 
 // 3. 지도의 경계 설정
 const imageBounds = [[0, 0], [imgHeight, imgWidth]];
