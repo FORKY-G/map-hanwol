@@ -70,11 +70,11 @@ animals.forEach((ani) => {
         </div>
     `;
     marker.bindPopup(popupContent, {
-        autoPan: true,
-        autoPanPaddingTopLeft: [50, 50],
-        autoPanPaddingBottomRight: [50, 50],
-        keepInView: true
-    });
+    autoPan: false, // 무한 루프 방지를 위해 자동 이동을 끕니다.
+    keepInView: true,
+    closeButton: false,
+    offset: L.point(0, -5)
+});
     marker.on('mouseover', () => polyline.setStyle({ opacity: 0.7 }));
     marker.on('mouseout', () => polyline.setStyle({ opacity: 0 }));
 });
@@ -125,10 +125,11 @@ mines.forEach((mine) => {
     `;
     
     marker.bindPopup(popupContent, {
-        offset: L.point(0, 10), 
-        autoPanPadding: [60, 60],
-        keepInView: true
-    });
+    autoPan: false,
+    keepInView: true,
+    closeButton: false,
+    offset: L.point(0, 10) // 광산은 창이 크니 살짝 아래로 뜨게 유지
+});
     marker.on('mouseover', () => minePolylines[mine.c].setStyle({ opacity: 0.8 }));
     marker.on('mouseout', () => minePolylines[mine.c].setStyle({ opacity: 0 }));
 });
@@ -167,30 +168,36 @@ redItems.forEach((item) => {
     `;
 
     marker.bindPopup(popupContent, {
-        autoPan: true,
-        autoPanPaddingTopLeft: [50, 50],
-        autoPanPaddingBottomRight: [50, 50],
-        keepInView: true
-    });
+    autoPan: false, // 무한 루프 방지를 위해 자동 이동을 끕니다.
+    keepInView: true,
+    closeButton: false,
+    offset: L.point(0, -5)
+});
 });
 
-// ★ [핵심] 천장/벽 잘림 방지 보정 스크립트 (파일 맨 아래에 위치)
 map.on('popupopen', function(e) {
     const popup = e.popup;
     const container = popup._container;
     
-    // 팝업이 뜨자마자 화면상의 위치를 체크합니다.
+    // 팝업이 뜨자마자 화면상의 위치 체크
     const rect = container.getBoundingClientRect();
+    const mapRect = document.getElementById('map').getBoundingClientRect();
     
-    // 만약 팝업의 윗부분이 화면 상단(천장)에서 20px 이내로 가깝거나 넘어갔다면
-    if (rect.top < 20) {
-        // 팝업을 마커 아래쪽으로 강제로 밀어내기 위해 마진을 줍니다.
-        // 팝업 높이만큼 아래로 내리면 마커 아래쪽에 위치하게 됩니다.
-        const shiftDistance = rect.height + 40; 
-        container.style.marginTop = shiftDistance + "px";
-        
-        // 말풍선 꼬리표(세모)가 거꾸로 보이면 어색하므로 숨깁니다.
+    // 천장에 닿았을 때 (여유있게 60px 기준)
+    if (rect.top < mapRect.top + 60) {
+        // 팝업을 마커 아래로 내림
+        container.style.transform += " translateY(" + (rect.height + 40) + "px)";
         const tip = container.querySelector('.leaflet-popup-tip-container');
         if (tip) tip.style.display = 'none';
+    }
+
+    // 왼쪽 벽에 닿았을 때
+    if (rect.left < mapRect.left + 20) {
+        container.style.transform += " translateX(" + (rect.width / 2 + 10) + "px)";
+    }
+    
+    // 오른쪽 벽에 닿았을 때
+    if (rect.right > mapRect.right - 20) {
+        container.style.transform += " translateX(-" + (rect.width / 2 + 10) + "px)";
     }
 });
