@@ -1,21 +1,17 @@
-// js/ui-control.js
-
 // [0] 레이어 그룹 정의 (체크박스 제어용)
 const layers = {
     spawn: L.layerGroup().addTo(map),      // 스폰: 초기 ON
     animals: L.layerGroup().addTo(map),    // 십이지신: 초기 ON
-    stones: L.layerGroup(),                // 나머지는 초기 OFF (addTo(map) 없음)
+    stones: L.layerGroup(),                // 나머지는 체크해야 나타남
     npc: L.layerGroup(),
     red: L.layerGroup(),
     pot: L.layerGroup(),
     box: L.layerGroup(),
     mines: {
-        "녹": L.layerGroup(),
-        "청": L.layerGroup(),
-        "황": L.layerGroup(),
-        "적": L.layerGroup()
+        "녹": L.layerGroup(), "청": L.layerGroup(), "황": L.layerGroup(), "적": L.layerGroup()
     },
-    hunting: {}
+    hunting: {},
+    huntingMarkers: L.layerGroup() // 사냥터 투명 마커 전용 그룹 (검색용)
 };
 
 // [1] 공용 아이콘 정의 모음
@@ -63,7 +59,7 @@ const npcIcon = L.icon({
 const animalPathPoints = animals.map(ani => mcToPx(ani.mcX, ani.mcZ));
 const polyline = L.polyline(animalPathPoints, {
     color: '#FFD700', weight: 2, opacity: 0, dashArray: '5, 8'
-}).addTo(layers.animals); // 그룹에 추가
+}).addTo(layers.animals); 
 
 // [3] 광산 전용 동선 설정
 const minePolylines = {};
@@ -77,7 +73,7 @@ Object.keys(minePaths).forEach(colorKey => {
 
     minePolylines[colorKey] = L.polyline(pathCoords, {
         color: mineColors[colorKey], weight: 3, opacity: 0, dashArray: '7, 10'
-    }).addTo(layers.mines[colorKey]); // 각 광산 그룹에 추가
+    }).addTo(layers.mines[colorKey]); 
 });
 
 // [4] 좌표 복사 함수
@@ -286,26 +282,19 @@ npcData.forEach((npc) => {
 const huntingImageBounds = [[0, 0], [7300, 7300]]; 
 const huntingListContainer = document.getElementById('hunt-accordion-content');
 
-// 사냥터 전용 투명 마커들을 담을 객체 추가
-layers.huntingMarkers = {}; 
-
 huntingGrounds.forEach((area) => {
-    // 1. 이미지 오버레이 생성 (interactive: false로 설정하여 다른 마커 클릭 방해 금지)
     const overlay = L.imageOverlay(`images/${area.file}`, huntingImageBounds, {
         opacity: 0.5, 
         interactive: false 
     });
     layers.hunting[area.name] = overlay;
 
-    // 2. 투명 마커 생성 (대표 좌표 x, z 기반)
     const targetPos = mcToPx(area.x, area.z);
     const hMarker = L.marker(targetPos, { 
         icon: transparentIcon,
-        zIndexOffset: -500 // 다른 중요한 마커보다 뒤에 배치
-    });
-    layers.huntingMarkers[area.name] = hMarker;
+        zIndexOffset: -500
+    }).addTo(layers.huntingMarkers); // 중요: 검색을 위해 그룹에 추가
 
-    // 3. 목록(아코디언) 아이템 생성
     const label = document.createElement('label');
     label.className = 'control-item';
     label.innerHTML = `
@@ -315,7 +304,6 @@ huntingGrounds.forEach((area) => {
     `;
     huntingListContainer.appendChild(label);
 
-    // 4. 팝업 내용 정의 (마커에 연결)
     const memoInfo = area.memo ? `<div style="margin-top:4px; color:#d00; font-weight:700;">${area.memo}</div>` : '';
     const popupContent = `
         <div style="text-align:center; min-width:220px; color:#000; padding: 5px; line-height: 1.4;">
@@ -331,31 +319,18 @@ huntingGrounds.forEach((area) => {
     `;
     hMarker.bindPopup(popupContent, { autoPan: false, keepInView: true });
 
-    // 5. 체크박스 이벤트 연결 (이동 + 확대 + 팝업)
     document.getElementById(`hunt-${area.name}`).addEventListener('change', function(e) {
         if(e.target.checked) {
-            // 레이어 및 마커 표시
             layers.hunting[area.name].addTo(map);
-            layers.huntingMarkers[area.name].addTo(map);
-
-            // [심화] 부드러운 이동 및 확대
-            map.flyTo(targetPos, 0.5, {
-                animate: true,
-                duration: 1.0
-            });
-
-            // 이동 후 팝업 자동 열기 (0.6초 뒤)
-            setTimeout(() => {
-                layers.huntingMarkers[area.name].openPopup();
-            }, 500);
+            hMarker.addTo(map);
+            map.flyTo(targetPos, 4, { animate: true, duration: 1.0 });
+            setTimeout(() => { hMarker.openPopup(); }, 500);
         } else {
-            // 체크 해제 시 제거
             map.removeLayer(layers.hunting[area.name]);
-            map.removeLayer(layers.huntingMarkers[area.name]);
+            map.removeLayer(hMarker);
         }
     });
 
-    // 이미지 효과 (그림 확인용)
     overlay.on('mouseover', function () { this.setOpacity(0.8); });
     overlay.on('mouseout', function () { this.setOpacity(0.5); });
 });
@@ -371,46 +346,52 @@ const bindCheckbox = (id, layer) => {
     }
 };
 
-// [16] 통합 검색 시스템 (엔터키 및 검색 결과 자동 선택 포함)
+// 모든 체크박스 연결
+bindCheckbox('check-spawn', layers.spawn);
+bindCheckbox('check-animals', layers.animals);
+bindCheckbox('check-stones', layers.stones);
+bindCheckbox('check-npc', layers.npc);
+bindCheckbox('check-red', layers.red);
+bindCheckbox('check-pot', layers.pot);
+bindCheckbox('check-box', layers.box);
+bindCheckbox('mine-녹', layers.mines["녹"]);
+bindCheckbox('mine-청', layers.mines["청"]);
+bindCheckbox('mine-황', layers.mines["황"]);
+bindCheckbox('mine-적', layers.mines["적"]);
+
+// [16] 통합 검색 시스템
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
-
-// 현재 검색된 결과들을 담아둘 임시 배열
 let currentFilteredData = [];
 
 searchInput.addEventListener('input', function() {
     const query = this.value.trim().toLowerCase();
     searchResults.innerHTML = '';
-    currentFilteredData = []; // 검색할 때마다 초기화
+    currentFilteredData = []; 
     
     if (!query) {
         searchResults.style.display = 'none';
         return;
     }
 
-    // 1. 데이터 수집 (십이지신, 광산, 사냥터, NPC 등)
-    // 십이지신
     animals.forEach(ani => {
         if (ani.name.toLowerCase().includes(query)) {
             currentFilteredData.push({ name: ani.name, category: '십이지신', x: ani.mcX, z: ani.mcZ, type: 'animal' });
         }
     });
 
-    // 광산 (숫자 완전 일치)
     mines.forEach(mine => {
         if (mine.n.toString() === query) {
             currentFilteredData.push({ name: `${mine.n}번 광산`, category: '광산', x: mine.x, z: mine.z, type: 'mine' });
         }
     });
 
-    // 사냥터 (이름 또는 몬스터 포함)
     huntingGrounds.forEach(area => {
         if (area.name.toLowerCase().includes(query) || area.monsters.toLowerCase().includes(query)) {
             currentFilteredData.push({ name: area.name, category: `사냥터 (${area.monsters})`, x: area.x, z: area.z, type: 'hunting', areaName: area.name });
         }
     });
 
-    // 기타 (NPC, 적환단 등)
     const extras = [
         { data: npcData, cat: 'NPC' },
         { data: redItems, cat: '적환단' },
@@ -429,10 +410,9 @@ searchInput.addEventListener('input', function() {
         });
     });
 
-    // 결과 목록 표시
     if (currentFilteredData.length > 0) {
         searchResults.style.display = 'block';
-        currentFilteredData.forEach((item, index) => {
+        currentFilteredData.forEach((item) => {
             const div = document.createElement('div');
             div.className = 'search-result-item';
             div.innerHTML = `<span class="category">[${item.category}]</span> ${item.name}`;
@@ -444,58 +424,62 @@ searchInput.addEventListener('input', function() {
     }
 });
 
-// [추가] 엔터키 이벤트 리스너
 searchInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        if (currentFilteredData.length > 0) {
-            // 결과가 있으면 가장 첫 번째 항목을 자동으로 선택
-            selectSearchResult(currentFilteredData[0]);
-        }
+    if (e.key === 'Enter' && currentFilteredData.length > 0) {
+        selectSearchResult(currentFilteredData[0]);
     }
 });
 
-// 결과 선택 시 실행되는 공통 함수
 function selectSearchResult(item) {
     moveToLocation(item);
     searchResults.style.display = 'none';
     searchInput.value = item.name;
-    searchInput.blur(); // 입력창 포커스 해제
+    searchInput.blur();
 }
 
-// 위치 이동 및 팝업 표시 함수 (기존 유지)
 function moveToLocation(target) {
     const targetPos = mcToPx(target.x, target.z);
-    map.flyTo(targetPos, 0.5, { animate: true, duration: 1.0 });
+    map.flyTo(targetPos, 4, { animate: true, duration: 1.0 });
 
     setTimeout(() => {
-        L.popup({ autoPan: false })
-            .setLatLng(targetPos)
-            .setContent(`<div style="text-align:center; font-weight:800;">[${target.category}]<br>${target.name}</div>`)
-            .openOn(map);
-            
+        let foundMarker = null;
+
+        // 1. 일반 레이어에서 찾기
+        const searchGroups = [layers.spawn, layers.animals, layers.stones, layers.npc, layers.red, layers.pot, layers.box, ...Object.values(layers.mines)];
+        searchGroups.forEach(group => {
+            group.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.getLatLng().equals(targetPos)) foundMarker = layer;
+            });
+        });
+
+        // 2. 사냥터 레이어에서 찾기
+        if (!foundMarker) {
+            layers.huntingMarkers.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.getLatLng().equals(targetPos)) foundMarker = layer;
+            });
+        }
+
+        if (foundMarker) {
+            // 레이어 체크여부 상관없이 검색된 마커는 임시로 지도에 추가해서 팝업 띄움
+            if (!map.hasLayer(foundMarker)) foundMarker.addTo(map);
+            foundMarker.openPopup();
+        } else {
+            L.popup().setLatLng(targetPos)
+                .setContent(`<div style="text-align:center; font-weight:800;">[${target.category}]<br>${target.name}</div>`)
+                .openOn(map);
+        }
+
+        // 사냥터일 경우 이미지가 꺼져있으면 켜주기
         if (target.type === 'hunting') {
             const chk = document.getElementById(`hunt-${target.areaName}`);
-            if (chk) {
+            if (chk && !chk.checked) {
                 chk.checked = true;
                 layers.hunting[target.areaName].addTo(map);
-                layers.huntingMarkers[target.areaName].addTo(map);
+                foundMarker.addTo(map);
             }
         }
-    }, 1000);
+    }, 1100);
 }
-
-// 모든 체크박스 연결
-bindCheckbox('check-spawn', layers.spawn);
-bindCheckbox('check-animals', layers.animals);
-bindCheckbox('check-stones', layers.stones);
-bindCheckbox('check-npc', layers.npc);
-bindCheckbox('check-red', layers.red);
-bindCheckbox('check-pot', layers.pot);
-bindCheckbox('check-box', layers.box);
-bindCheckbox('mine-녹', layers.mines["녹"]);
-bindCheckbox('mine-청', layers.mines["청"]);
-bindCheckbox('mine-황', layers.mines["황"]);
-bindCheckbox('mine-적', layers.mines["적"]);
 
 // [최종] 잘림 방지 보정 스크립트
 map.on('popupopen', function(e) {
