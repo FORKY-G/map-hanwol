@@ -142,15 +142,15 @@ mines.forEach((mine) => {
     marker.on('mouseout', () => minePolylines[mine.c].setStyle({ opacity: 0 }));
 });
 
-// [8] 적환단 및 특수 제작 아이템 마커 생성 (최종 완성본)
+// [8] 적환단 및 특수 제작 아이템 마커 생성
 redItems.forEach((item) => {
     const pos = mcToPx(item.x, item.z);
     
-    // 1. 아이콘 결정: 
-    // 데이터에 name이 있는 특수 아이템(탐령구 등)은 데이터의 file(gu.png 등)을 아이콘으로 사용
-    // 일반 적환단은 기존 redIcon(red.png) 사용
+    // 1. 아이콘 결정
+    // item.n 이 숫자가 아니면(즉, "탐령구" 같은 글자이면) 전용 아이콘 사용
+    // item.n 이 숫자이면(일반 적환단) 기본 redIcon 사용
     let currentIcon;
-    if (item.name) {
+    if (typeof item.n === "string") {
         currentIcon = L.icon({
             iconUrl: `images/${item.file}`,
             iconSize: [32, 32], 
@@ -158,21 +158,23 @@ redItems.forEach((item) => {
             popupAnchor: [0, -15]
         });
     } else {
-        currentIcon = redIcon; // 기존 정의된 redIcon 사용
+        currentIcon = redIcon; // 기존 정의된 redIcon (red.png)
     }
 
     const marker = L.marker(pos, { icon: currentIcon }).addTo(layers.red);
 
-    // 2. 팝업 내용 설정
-    const itemName = item.name ? item.name : "적환단"; 
+    // 2. 팝업 이름 설정: 숫우면 "적환단", 글자면 해당 이름("탐령구" 등) 출력
+    const itemName = typeof item.n === "string" ? item.n : "적환단"; 
+
+    // 3. 재료 정보: 데이터에 materials가 있을 때만 생성
     const materialInfo = item.materials ? `
         <div style="text-align:left; font-size:12px; margin-bottom:8px; padding:10px; background:#fff; border-radius:4px; border:1px solid #eee;">
             <span style="color:#d00; font-weight:800;">[필요재료]</span><br>
             <span style="font-weight:700; color:#333;">${item.materials}</span>
         </div>` : '';
 
-    // 이름이 없는 일반 적환단만 하단에 상세 사진 표시
-    const imageSection = !item.name ? `
+    // 4. 사진 섹션: 일반 적환단(n이 숫자일 때)만 상세 사진 표시
+    const imageSection = typeof item.n !== "string" ? `
         <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
             <img src="images/${item.file}" style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" onclick="window.open('images/${item.file}', '_blank')">
         </div>` : '';
