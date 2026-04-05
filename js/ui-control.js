@@ -146,15 +146,23 @@ mines.forEach((mine) => {
 redItems.forEach((item) => {
     const pos = mcToPx(item.x, item.z);
     
-    // 1. 아이콘 설정: 모든 항목에 공통으로 redIcon(red.png)을 사용합니다.
-    // 만약 탐령구/정적주만 아이콘을 다르게 하고 싶다면 그때 다시 말씀해주세요!
+    // 1. 모든 아이콘은 통일감 있게 기존 redIcon(red.png) 사용
     const marker = L.marker(pos, { icon: redIcon }).addTo(layers.red);
 
-    // 2. 팝업 내용 설정: 이름과 재료가 데이터에 있으면 표시
+    // 2. 이름 설정: 데이터에 name이 있으면 쓰고, 없으면 "적환단"
     const itemName = item.name || "적환단"; 
+
+    // 3. 재료 정보: 데이터에 materials가 있을 때만 생성
     const materialInfo = item.materials ? `
         <div style="text-align:left; font-size:12px; margin-bottom:8px; padding:8px; background:#f9f9f9; border:1px solid #eee; border-radius:4px;">
             <span style="color:#d00; font-weight:800;">[필요재료]</span><br>${item.materials}
+        </div>` : '';
+
+    // 4. 사진 섹션: "적환단"인 경우(이름이 없는 경우)에만 사진을 보여줌
+    // 탐령구, 정적주처럼 이름이 따로 있는 애들은 사진 칸이 아예 안 생깁니다.
+    const imageSection = !item.name ? `
+        <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
+            <img src="images/${item.file}" style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" onclick="window.open('images/${item.file}', '_blank')">
         </div>` : '';
 
     const popupContent = `
@@ -167,9 +175,7 @@ redItems.forEach((item) => {
                 <div style="color:#aaa; font-size:9px;">(클릭하여 좌표 복사)</div>
             </div>
             ${materialInfo}
-            <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
-                <img src="images/${item.file}" style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" onclick="window.open('images/${item.file}', '_blank')">
-            </div>
+            ${imageSection}
         </div>
     `;
     
