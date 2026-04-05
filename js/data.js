@@ -181,37 +181,34 @@ const huntingGrounds = [
 
 // [약초 데이터] 
 const herbData = [
-    { name: "홍련업화", file: "hub19.png", locations: [{ x: -6842, z: 1888 }] },
-    { name: "민들레", file: "hub4.png", locations: [{ x: -3072, z: -5416 }, { x: -3006, z: -5033 }] },
-    { name: "옥향초", file: "hub9.png", locations: [
-        { x: 6306, z: 4265 }, { x: 4800, z: 3752 }, { x: 6408, z: 4024 }, { x: 6438, z: 4437 }
-    ]},
-    { name: "빙백설화", file: "hub16.png", locations: [{ x: 6424, z: 136 }] },
-    { name: "흑성과", file: "hub14.png", locations: [{ x: -1671, z: -3534 }, { x: 1545, z: -186 }] },
-    { name: "권엽", file: "hub1.png", locations: [{ x: -4496, z: -184 }] },
+    { name: "홍련업화", file: "hub19.png", locations: [{ x: -6842, y: 84, z: 1888 }] },
+    { name: "민들레", file: "hub4.png", locations: [{ x: -3006, y: 92, z: -5033 }, { x: 1332, y: 86, z: -6112 }] },
+    { name: "옥향초", file: "hub9.png", locations: [{ x: 4800, y: 116, z: 3752 }, { x: 6408, z: 4024 }] },
+    { name: "빙백설화", file: "hub16.png", locations: [{ x: 6424, y: 174, z: 136 }] },
+    { name: "흑성과", file: "hub14.png", locations: [{ x: -1671, y: 133, z: -3534 }, { x: 1968, y: 124, z: -280 }] },
+    { name: "권엽", file: "hub1.png", locations: [{ x: -4496, y: 78, z: -184 }] },
     { name: "생강", file: "hub6.png", locations: [
-        { x: 1485, z: 3133 }, { x: 1248, z: 5784 }, { x: -4656, z: 2024 }
+        { x: 1485, y: 68, z: 3133 }, { x: 1248, y: 108, z: 5784 }, { x: -4656, y: 72, z: 2024 }
     ]},
-    { name: "인삼", file: "hub10.png", locations: [{ x: -4705, z: 765 }, { x: 1500, z: 4200 }] },
+    { name: "인삼", file: "hub10.png", locations: [{ x: -4705, y:141, z: 765 }, { x: 1500, y: 211, z: 4200 }] },
     { name: "옥취엽", file: "hub8.png", locations: [
-        { x: -1323, z: -588 }, { x: -3702, z: -2388 }, { x: 882, z: -2274 }
+        { x: -1323, y: 245, z: -588 }, { x: -3702, y: 118, z: -2388 }, { x: 882, y: 124, z: -2274 }
     ]},
     { name: "황초", file: "hub13.png", locations: [
-        { x: 3348, z: -4641 }, { x: -4168, z: -4856 }, { x: -1444, z: -298 }
+        { x: 3348, y: 109, z: -4641 }, { x: -3612, y: 92, z: -5616 }, { x: -1444, y: 130, z: -298 }
     ]},
     { name: "녹태", file: "hub3.png", locations: [
-        { x: 1110, z: -2830 }, { x: -2176, z: -187 }, { x: -285, z: -1059 }
+        { x: 1110, y: 102, z: -2830 }, { x: -2176, y: 102, z: -187 }, { x: -285, y: 80, z: -1059 }
     ]},
-    { name: "철목영지", file: "hub18.png", locations: [{ x: -2304, z: 4228 }] },
+    { name: "철목영지", file: "hub18.png", locations: [{ x: -2304, y: 170, z: 4228 }, { x: -3326, y: 128, z: 3190 }] },
     { name: "적주과", file: "hub12.png", locations: [
-        { x: 344, z: 2102 }, { x: -3944, z: 1272 }, { x: -975, z: 766 }
+        { x: -344, y: 184, z: 22056 }, { x: -3944, y: 241, z: 1272 }, { x: -975, y: 244, z: 766 }
     ]},
-    { name: "자운초", file: "hub11.png", locations: [{ x: 2744, z: 4672 }, { x: 4034, z: 4340 }] },
-    { name: "월계엽", file: "hub17.png", locations: [{ x: -96, z: -6504 }] },
-    { name: "영군버섯", file: "hub7.png", locations: [
-        { x: -4568, z: -3959 }, { x: 768, z: 5056 }, { x: -1712, z: -6379 }
+    { name: "자운초", file: "hub11.png", locations: [{ x: 2744, y: 224, z: 4672 }, { x: 4034, y: 210, z: 4340 }] },
+    { name: "월계엽", file: "hub17.png", locations: [{ x: -96, y: 183, z: -6504 }] },
+    { name: "영군버섯", file: "hub7.png", locations: [{ x: 768, y: 101, z: 5056 }, { x: -1712, y: 113, z: -6379 }
     ]},
-    { name: "백향초", file: "hub5.png", locations: [{ x: -5488, z: 4162 }] },
-    { name: "금향과", file: "hub15.png", locations: [{ x: 560, z: 1416 }] },
-    { name: "금양광초", file: "hub2.png", locations: [{ x: 3236, z: 2560 }] }
+    { name: "백향초", file: "hub5.png", locations: [{ x: -5488, y: 66, z: 4162 }] },
+    { name: "금향과", file: "hub15.png", locations: [{ x: 560, y: 229, z: 1416 }] },
+    { name: "금양광초", file: "hub2.png", locations: [{ x: 3236, t: 124, z: 2560 }, { x: 3796, y: 116, z: 1044 }] }
 ];
