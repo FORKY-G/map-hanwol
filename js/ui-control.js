@@ -295,15 +295,14 @@ npcData.forEach((npc) => {
         `;
     }
 
-    // 2. 동영상 가이드 (해무사승려 전용)
+    // 2. 동영상 가이드 (mp4 버전으로 수정)
     let videoHtml = '';
     if (npc.name === "해무사승려") {
         videoHtml = `
             <div style="margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
                 <div style="font-weight:800; font-size:13px; color:#007bff; margin-bottom:5px;">[퀘스트 가이드 영상]</div>
-                <video width="100%" height="auto" controls style="border-radius:4px; border:1px solid #ddd;">
-                    <source src="images/haemusa.mov" type="video/quicktime">
-                    <source src="images/haemusa.mov" type="video/mov">
+                <video width="100%" height="auto" controls playsinline style="border-radius:4px; border:1px solid #ddd; display:block; background:#000;">
+                    <source src="images/haemusa.mp4" type="video/mp4">
                     브라우저가 동영상을 지원하지 않습니다.
                 </video>
             </div>
@@ -334,9 +333,8 @@ npcData.forEach((npc) => {
         </div>
     `;
     
-    // 팝업이 길어지므로 autoPan: true로 설정하여 화면 밖으로 나가지 않게 함
+    // autoPan: true를 설정해야 영상이 뜰 때 지도가 자동으로 움직여서 팝업을 다 보여줍니다.
     marker.bindPopup(popupContent, { autoPan: true, keepInView: true, closeButton: false, offset: L.point(0, -5) });
-});
 
 // [14] 사냥터 영역 및 투명 마커 생성
 const huntingImageBounds = [[0, 0], [7300, 7300]]; 
