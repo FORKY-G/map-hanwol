@@ -259,6 +259,23 @@ npcData.forEach((npc) => {
     const pos = mcToPx(npc.x, npc.z);
     let currentIcon = npc.file === "transparent" ? transparentIcon : L.icon({ iconUrl: `images/${npc.file}`, iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -20] });
     const marker = L.marker(pos, { icon: currentIcon }).addTo(layers.npc);
+    let recordsHtml = '';
+    if (npc.records && npc.records.length > 0) {
+        recordsHtml = `
+            <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+                <div style="font-weight:800; font-size:13px; color:#d00; margin-bottom:5px;">[기록서 위치 복사]</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+        `;
+        npc.records.forEach(rec => {
+            recordsHtml += `
+                <button onclick="copyCoords(${rec.x}, ${rec.y}, ${rec.z})" 
+                        style="padding:4px; font-size:11px; background:#f8f9fa; border:1px solid #ccc; cursor:pointer; font-weight:700;">
+                    기록서 ${rec.n}
+                </button>
+            `;
+        });
+        recordsHtml += `</div></div>`;
+    } 
     const lvInfo = npc.lv ? `<span style="font-size:12px; color:#666; font-weight:normal;"> (lv.${npc.lv})</span>` : '';
     const questInfo = npc.quest ? `<div style="margin-bottom:4px;"><span style="color:#d00; font-weight:800;">[퀘스트]</span> ${npc.quest}</div>` : '';
     const itemInfo = npc.item ? `<div style="margin-bottom:4px;"><span style="color:#007bff; font-weight:800;">[필요아이템]</span> ${npc.item}</div>` : '';
@@ -272,7 +289,9 @@ npcData.forEach((npc) => {
                 <div style="color:#FFD700; font-size:15px; font-weight:700;">${npc.x}, ${npc.y}, ${npc.z}</div>
                 <div style="color:#aaa; font-size:9px;">(클릭하여 좌표 복사)</div>
             </div>
-            <div style="text-align:left; font-size:12px; color:#333; border-top:1px solid #aaa; padding-top: 8px;">${questInfo}${itemInfo}${routeInfo}${rewardInfo}${memoInfo}</div>
+            <div style="text-align:left; font-size:12px; color:#333;">
+                ${questInfo}
+                ${recordsHtml} </div>
         </div>
     `;
     marker.bindPopup(popupContent, { autoPan: false, keepInView: true, closeButton: false, offset: L.point(0, -5) });
