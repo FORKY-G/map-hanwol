@@ -142,22 +142,45 @@ mines.forEach((mine) => {
     marker.on('mouseout', () => minePolylines[mine.c].setStyle({ opacity: 0 }));
 });
 
-// [8] 적환단 마커 생성
+// [8] 적환단 및 특수 제작 아이템 마커 생성
 redItems.forEach((item) => {
     const pos = mcToPx(item.x, item.z);
-    const marker = L.marker(pos, { icon: redIcon }).addTo(layers.red);
+    
+    // 1. 아이콘 설정: 데이터에 file이 있으면 해당 이미지, 없으면 기본 red.png 사용
+    const iconUrl = item.file ? `images/${item.file}` : `images/red.png`;
+    const customIcon = L.icon({
+        iconUrl: iconUrl,
+        iconSize: [32, 32], 
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -15]
+    });
+    
+    // [중요] marker 생성 시 icon을 위에서 만든 customIcon으로 교체했습니다.
+    const marker = L.marker(pos, { icon: customIcon }).addTo(layers.red);
+
+    // 2. 팝업 내용 설정: 이름과 재료가 데이터에 있으면 표시
+    const itemName = item.name || "적환단"; // 이름 없으면 기본값 적환단
+    const materialInfo = item.materials ? `
+        <div style="text-align:left; font-size:12px; margin-bottom:8px; padding:5px; background:#f4f4f4; border-radius:4px;">
+            <span style="color:#d00; font-weight:800;">[필요재료]</span><br>${item.materials}
+        </div>` : '';
+
     const popupContent = `
         <div style="text-align:center; min-width:200px; color:#000; padding: 0;">
-            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">적환단</div>
+            <div style="font-size:18px; font-weight:800; border-bottom:2px solid #000; padding: 5px 0; margin-bottom: 10px;">
+                ${itemName}
+            </div>
             <div style="background:#333; border-radius:4px; padding: 5px 0; margin-bottom: 10px; cursor:pointer;" onclick="copyCoords(${item.x}, ${item.y}, ${item.z})">
                 <div style="color:#FFD700; font-size:15px; font-weight:700;">${item.x}, ${item.y}, ${item.z}</div>
                 <div style="color:#aaa; font-size:9px;">(클릭하여 좌표 복사)</div>
             </div>
+            ${materialInfo}
             <div style="margin-top: 5px; border: 1px solid #ccc; padding: 2px; background: #fff;">
                 <img src="images/${item.file}" style="width:100%; max-width:180px; height:auto; cursor:zoom-in; display:block; margin:0 auto;" onclick="window.open('images/${item.file}', '_blank')">
             </div>
         </div>
     `;
+    
     marker.bindPopup(popupContent, { autoPan: false, keepInView: true, closeButton: false, offset: L.point(0, -5) });
 });
 
