@@ -283,12 +283,12 @@ npcData.forEach((npc) => {
     if (npc.records && npc.records.length > 0) {
         recordsHtml = `
             <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
-                <div style="font-weight:800; font-size:13px; color:#d00; margin-bottom:5px;">[기록서 위치 복사]</div>
+                <div style="font-weight:800; font-size:13px; color:#d00; margin-bottom:5px;">[주요 위치 복사]</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
                     ${npc.records.map(rec => `
                         <button onclick="copyCoords(${rec.x}, ${rec.y}, ${rec.z})" 
-                                style="padding:4px; font-size:11px; background:#f8f9fa; border:1px solid #ccc; cursor:pointer; font-weight:700;">
-                            기록서 ${rec.n}
+                                style="padding:4px; font-size:11px; background:#f8f9fa; border:1px solid #ccc; cursor:pointer; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            ${typeof rec.n === 'number' ? '기록서 ' + rec.n : rec.n}
                         </button>
                     `).join('')}
                 </div>
