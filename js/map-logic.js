@@ -7,7 +7,7 @@ const map = L.map('map', {
 });
 
 L.control.attribution({
-    prefix: '<img src="images/forky.png" style="width:15px; vertical-align:middle; margin-right:3px;"> forky_G'
+    prefix: '<img src="images/forky.png" style="width:15px; vertical-align:middle; margin-right:3px;"> FORKY_G'
 }).addTo(map);
 
 // 웹에 띄운 이미지의 실제 픽셀 크기
