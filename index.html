@@ -293,96 +293,95 @@
     <script src="js/map-logic.js"></script>    
     <script src="js/ui-control.js"></script>   
 
-    <script>
-        const sidebar = document.getElementById('controls');
-        const toggleBtn = document.getElementById('toggle-sidebar');
-        const searchResultsDiv = document.getElementById('search-results');
+<script>
+    const sidebar = document.getElementById('controls');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    const searchResultsDiv = document.getElementById('search-results');
 
-        function toggleSidebar() {
-            if (!sidebar) return;
-            sidebar.classList.toggle('active');
-            toggleBtn.innerText = sidebar.classList.contains('active') ? '▲ 한월메뉴 닫기' : '▼ 한월메뉴 열기';
-        }
+    // [1] 사이드바 토글 함수
+    function toggleSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.toggle('active');
+        toggleBtn.innerText = sidebar.classList.contains('active') ? '▲ 한월메뉴 닫기' : '▼ 한월메뉴 열기';
+    }
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
-        }
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+    }
 
-        if (typeof map !== 'undefined') {
-            map.on('click', () => {
-                if (sidebar && sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                    toggleBtn.innerText = '▼ 한월메뉴 열기';
-                }
-                if (searchResultsDiv) searchResultsDiv.style.display = 'none';
-            });
-        }
-
-        if (sidebar) sidebar.addEventListener('click', (e) => e.stopPropagation());
-
-        function bindAccordion(btnId, contentId) {
-            const btn = document.getElementById(btnId);
-            const content = document.getElementById(contentId);
-            if (btn && content) {
-                btn.addEventListener('click', function() {
-                    content.classList.toggle('active');
-                    this.querySelector('span').innerText = content.classList.contains('active') ? '▲' : '▼';
-                });
+    // [2] 지도 클릭 시 처리 (공지사항 팝업 제외)
+    if (typeof map !== 'undefined') {
+        map.on('click', () => {
+            // 사이드바와 검색 결과만 닫기
+            if (sidebar && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                toggleBtn.innerText = '▼ 한월메뉴 열기';
             }
-        }
-
-       // [1] 페이지 로드 시 공지사항 표시 여부 결정
-window.addEventListener('load', function() {
-    const isHidden = localStorage.getItem('hideNotice');
-    const modal = document.getElementById('notice-modal');
-    if (modal) {
-        if (isHidden === 'true') {
-            modal.style.display = 'none';
-        } else {
-            modal.style.display = 'flex'; 
-        }
-    }
-});
-
-// [2] 공지사항 닫기 및 '다시 보지 않기' 저장
-function closeNotice() {
-    const modal = document.getElementById('notice-modal');
-    const checkbox = document.getElementById('stop-showing');
-    if (modal) {
-        if (checkbox && checkbox.checked) {
-            localStorage.setItem('hideNotice', 'true'); 
-        }
-        modal.style.display = 'none';
-    }
-}
-
-// [3] 강력 방어: 팝업 내부 클릭 시 지도로 클릭이 전달되지 않게 차단
-const noticeModal = document.getElementById('notice-modal');
-if (noticeModal) {
-    // 배경 클릭 시 닫기
-    noticeModal.addEventListener('click', function(e) {
-        if (e.target === this) closeNotice();
-    });
-
-    // 하얀 박스(modal-content) 내부 클릭 시 지도 이벤트 전파 방지
-    const noticeContent = noticeModal.querySelector('.modal-content');
-    if (noticeContent) {
-        noticeContent.addEventListener('click', function(e) {
-            e.stopPropagation(); 
+            if (searchResultsDiv) searchResultsDiv.style.display = 'none';
         });
     }
-}
 
-// [4] 지도 클릭 시 사이드바만 닫히도록 기존 코드 수정 유지
-if (typeof map !== 'undefined') {
-    map.on('click', () => {
-        if (sidebar && sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
-            toggleBtn.innerText = '▼ 한월메뉴 열기';
+    if (sidebar) sidebar.addEventListener('click', (e) => e.stopPropagation());
+
+    // [3] 아코디언 바인딩
+    function bindAccordion(btnId, contentId) {
+        const btn = document.getElementById(btnId);
+        const content = document.getElementById(contentId);
+        if (btn && content) {
+            btn.addEventListener('click', function() {
+                content.classList.toggle('active');
+                this.querySelector('span').innerText = content.classList.contains('active') ? '▲' : '▼';
+            });
         }
-        if (searchResultsDiv) searchResultsDiv.style.display = 'none';
+    }
+    bindAccordion('hunt-accordion-btn', 'hunt-accordion-content');
+    bindAccordion('herb-accordion-btn', 'herb-accordion-content');
+
+    // [4] 공지사항 팝업 제어 (가장 중요)
+    window.addEventListener('load', function() {
+        const isHidden = localStorage.getItem('hideNotice');
+        const modal = document.getElementById('notice-modal');
+        
+        if (modal) {
+            // 다시 보지 않기가 체크된 적이 없다면 보여줌
+            if (isHidden !== 'true') {
+                modal.style.display = 'flex';
+            } else {
+                modal.style.display = 'none';
+            }
+        }
     });
-}
+
+    // 공지사항 닫기 함수
+    function closeNotice() {
+        const modal = document.getElementById('notice-modal');
+        const checkbox = document.getElementById('stop-showing');
+        
+        if (modal) {
+            // 체크박스가 선택된 상태에서 확인을 누르면 다는 안 뜸
+            if (checkbox && checkbox.checked) {
+                localStorage.setItem('hideNotice', 'true');
+            }
+            modal.style.display = 'none';
+        }
+    }
+
+    // 팝업 내부 클릭이 지도로 전달되어 팝업이 닫히는 것을 방지
+    const noticeModal = document.getElementById('notice-modal');
+    if (noticeModal) {
+        // 배경(검은 영역) 클릭 시 닫기
+        noticeModal.addEventListener('click', function(e) {
+            if (e.target === this) closeNotice();
+        });
+
+        // 하얀 박스 내부 클릭 시 클릭 이벤트가 지도로 흘러나가지 않게 차단
+        const modalContent = noticeModal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    }
         bindAccordion('hunt-accordion-btn', 'hunt-accordion-content');
         bindAccordion('herb-accordion-btn', 'herb-accordion-content');
     </script>
