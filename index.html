@@ -279,9 +279,12 @@
                 ※ 자세한 업데이트 내역은 서버 디스코드를 이용해주세요.
             </p>
         </div>
-        <div style="margin-top: 20px; text-align: right;">
-            <button onclick="closeNotice()" style="padding: 8px 24px; background: #000; color: #fff; border: none; font-weight: 900; cursor: pointer; font-family: 'Pretendard';">확인</button>
-        </div>
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <label style="font-size: 12px; color: #666; cursor: pointer; display: flex; align-items: center; font-weight: 700;">
+        <input type="checkbox" id="stop-showing" style="margin-right: 5px; cursor: pointer;"> 오늘 다시 보지 않기
+    </label>
+    <button onclick="closeNotice()" style="padding: 8px 24px; background: #000; color: #fff; border: none; font-weight: 900; cursor: pointer; font-family: 'Pretendard';">확인</button>
+</div>
     </div>
 </div>
     
@@ -342,12 +345,18 @@ window.addEventListener('load', function() {
     }
 });
 
-// [2] 공지사항 닫기 함수
+// [2] 공지사항 닫기 함수 (수정본)
 function closeNotice() {
     const modal = document.getElementById('notice-modal');
+    const checkbox = document.getElementById('stop-showing');
+    
     if (modal) {
+        // 체크박스가 체크되어 있다면 다시는 안 뜨도록 저장
+        if (checkbox && checkbox.checked) {
+            localStorage.setItem('hideNotice', 'true'); 
+        }
+        
         modal.style.display = 'none';
-        localStorage.setItem('hideNotice', 'true'); 
     }
 }
 
