@@ -306,13 +306,15 @@
     }
 
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+        toggleBtn.addEventListener('click', function(e) { 
+            e.stopPropagation(); 
+            toggleSidebar(); 
+        });
     }
 
     // [2] 지도 클릭 시 처리 (공지사항 팝업 제외)
     if (typeof map !== 'undefined') {
-        map.on('click', () => {
-            // 사이드바와 검색 결과만 닫기
+        map.on('click', function() {
             if (sidebar && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 toggleBtn.innerText = '▼ 한월메뉴 열기';
@@ -321,44 +323,44 @@
         });
     }
 
-    if (sidebar) sidebar.addEventListener('click', (e) => e.stopPropagation());
+    if (sidebar) {
+        sidebar.addEventListener('click', function(e) { 
+            e.stopPropagation(); 
+        });
+    }
 
-    // [3] 아코디언 바인딩
+    // [3] 아코디언 바인딩 함수
     function bindAccordion(btnId, contentId) {
         const btn = document.getElementById(btnId);
         const content = document.getElementById(contentId);
         if (btn && content) {
             btn.addEventListener('click', function() {
                 content.classList.toggle('active');
-                this.querySelector('span').innerText = content.classList.contains('active') ? '▲' : '▼';
+                const span = this.querySelector('span');
+                if (span) {
+                    span.innerText = content.classList.contains('active') ? '▲' : '▼';
+                }
             });
         }
     }
-    bindAccordion('hunt-accordion-btn', 'hunt-accordion-content');
-    bindAccordion('herb-accordion-btn', 'herb-accordion-content');
 
-    // [4] 공지사항 팝업 제어 (가장 중요)
+    // [4] 공지사항 팝업 제어
     window.addEventListener('load', function() {
         const isHidden = localStorage.getItem('hideNotice');
         const modal = document.getElementById('notice-modal');
-        
         if (modal) {
-            // 다시 보지 않기가 체크된 적이 없다면 보여줌
-            if (isHidden !== 'true') {
-                modal.style.display = 'flex';
-            } else {
+            if (isHidden === 'true') {
                 modal.style.display = 'none';
+            } else {
+                modal.style.display = 'flex';
             }
         }
     });
 
-    // 공지사항 닫기 함수
     function closeNotice() {
         const modal = document.getElementById('notice-modal');
         const checkbox = document.getElementById('stop-showing');
-        
         if (modal) {
-            // 체크박스가 선택된 상태에서 확인을 누르면 다는 안 뜸
             if (checkbox && checkbox.checked) {
                 localStorage.setItem('hideNotice', 'true');
             }
@@ -366,15 +368,12 @@
         }
     }
 
-    // 팝업 내부 클릭이 지도로 전달되어 팝업이 닫히는 것을 방지
     const noticeModal = document.getElementById('notice-modal');
     if (noticeModal) {
-        // 배경(검은 영역) 클릭 시 닫기
         noticeModal.addEventListener('click', function(e) {
             if (e.target === this) closeNotice();
         });
 
-        // 하얀 박스 내부 클릭 시 클릭 이벤트가 지도로 흘러나가지 않게 차단
         const modalContent = noticeModal.querySelector('.modal-content');
         if (modalContent) {
             modalContent.addEventListener('click', function(e) {
@@ -382,8 +381,10 @@
             });
         }
     }
-        bindAccordion('hunt-accordion-btn', 'hunt-accordion-content');
-        bindAccordion('herb-accordion-btn', 'herb-accordion-content');
-    </script>
+
+    // [5] 아코디언 실행
+    bindAccordion('hunt-accordion-btn', 'hunt-accordion-content');
+    bindAccordion('herb-accordion-btn', 'herb-accordion-content');
+</script>
 </body>
 </html>
