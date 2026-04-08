@@ -724,19 +724,6 @@ document.getElementById('reset-hunt').addEventListener('click', function(e) {
     });
 });
 
-document.getElementById('reset-herb').addEventListener('click', function(e) {
-    e.stopPropagation();
-    sortedHerbData.forEach(herb => {
-        const chk = document.getElementById(`herb-${herb.name}`);
-        if (chk && chk.checked) {
-            chk.checked = false;
-            map.removeLayer(layers.herbs[herb.name]);
-            map.removeLayer(layers.herbMarkers[herb.name]);
-        }
-    });
-    map.closePopup();
-});
-
 // 팝업 잘림 방지 (기존 유지)
 map.on('popupopen', function(e) {
     const popup = e.popup;
