@@ -331,7 +331,7 @@
             }
         }
 
-        // [1] 페이지 로드 시 실행 (팝업 표시 여부 결정)
+       // [1] 페이지 로드 시 실행 (팝업 표시 여부 결정)
 window.addEventListener('load', function() {
     const isHidden = localStorage.getItem('hideNotice');
     const modal = document.getElementById('notice-modal');
@@ -340,31 +340,43 @@ window.addEventListener('load', function() {
         if (isHidden === 'true') {
             modal.style.display = 'none';
         } else {
-            modal.style.display = 'flex'; // 저장된 값이 없으면 보여줌
+            modal.style.display = 'flex'; 
         }
     }
 });
 
-// [2] 공지사항 닫기 함수 (수정본)
+// [2] 공지사항 닫기 함수 - 체크박스 전용
 function closeNotice() {
     const modal = document.getElementById('notice-modal');
     const checkbox = document.getElementById('stop-showing');
     
     if (modal) {
-        // 체크박스가 체크되어 있다면 다시는 안 뜨도록 저장
         if (checkbox && checkbox.checked) {
             localStorage.setItem('hideNotice', 'true'); 
         }
-        
         modal.style.display = 'none';
     }
 }
 
-// [3] 배경 클릭 시 닫기 (선택 사항)
-const noticeModal = document.getElementById('notice-modal');
-if (noticeModal) {
-    noticeModal.addEventListener('click', function(e) {
-        if (e.target === this) closeNotice();
+// [3] 배경 클릭 시 닫기 (이 부분을 삭제하거나 수정하여 자동 종료 방지)
+// 기존에 noticeModal.addEventListener('click', ...) 코드가 있다면 삭제하세요.
+// 대신 팝업 내부 콘텐츠를 클릭했을 때 팝업이 닫히지 않도록 방어 코드를 넣습니다.
+const noticeContent = document.querySelector('.modal-content');
+if (noticeContent) {
+    noticeContent.addEventListener('click', (e) => e.stopPropagation());
+}
+
+// [4] 지도 클릭 시 사이드바만 닫히고 팝업은 유지되도록 수정
+if (typeof map !== 'undefined') {
+    map.on('click', () => {
+        // 사이드바만 닫기
+        if (sidebar && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            toggleBtn.innerText = '▼ 한월메뉴 열기';
+        }
+        if (searchResultsDiv) searchResultsDiv.style.display = 'none';
+        
+        // 중요: 여기서 closeNotice()가 실행되지 않도록 주의하세요!
     });
 }
 
