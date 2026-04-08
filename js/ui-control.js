@@ -84,7 +84,7 @@ window.copyCoords = (x, y, z) => {
         const toastText = document.getElementById('toast-text');
         
         if (toast && toastText) {
-            toastText.innerText = `복사 완료: ${text}`;
+            toastText.innerText = `복사 완료!`;
             toast.style.display = 'flex'; // block 대신 flex를 써야 아이콘이랑 정렬이 예뻐요!
             
             // 1.5초 뒤에 사라짐
@@ -707,47 +707,33 @@ L.popup().setLatLng(targetPos)
 
 // [18] 목록 초기화 시스템
 document.getElementById('reset-hunt').addEventListener('click', function(e) {
-e.stopPropagation();
-huntingGrounds.forEach(area => {
-const chk = document.getElementById(`hunt-${area.name}`);
-if (chk && chk.checked) {
-chk.checked = false;
-map.removeLayer(layers.hunting[area.name]);
-}
-});
-});
-
-// [18] 목록 초기화 시스템
-document.getElementById('reset-hunt').addEventListener('click', function(e) {
-e.stopPropagation();
-huntingGrounds.forEach(area => {
-const chk = document.getElementById(`hunt-${area.name}`);
-if (chk && chk.checked) {
-chk.checked = false;
-map.removeLayer(layers.hunting[area.name]);
-// 해당 영역의 마커도 지도에서 제거
-map.eachLayer(layer => {
-if (layer instanceof L.Marker && layer.getPopup() && layer.getPopup().getContent().includes(area.name)) {
-map.removeLayer(layer);
-}
-});
-}
-});
+    e.stopPropagation();
+    huntingGrounds.forEach(area => {
+        const chk = document.getElementById(`hunt-${area.name}`);
+        if (chk && chk.checked) {
+            chk.checked = false;
+            map.removeLayer(layers.hunting[area.name]);
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.getPopup() && layer.getPopup().getContent().includes(area.name)) {
+                    map.removeLayer(layer);
+                }
+            });
+        }
+    });
 });
 
 document.getElementById('reset-herb').addEventListener('click', function(e) {
-e.stopPropagation();
-sortedHerbData.forEach(herb => {
-const chk = document.getElementById(`herb-${herb.name}`);
-if (chk && chk.checked) {
-chk.checked = false;
-map.removeLayer(layers.herbs[herb.name]);
-map.removeLayer(layers.herbMarkers[herb.name]);
-}
+    e.stopPropagation();
+    sortedHerbData.forEach(herb => {
+        const chk = document.getElementById(`herb-${herb.name}`);
+        if (chk && chk.checked) {
+            chk.checked = false;
+            map.removeLayer(layers.herbs[herb.name]);
+            map.removeLayer(layers.herbMarkers[herb.name]);
+        }
+    });
+    map.closePopup();
 });
-map.closePopup();
-});
-
 
 // 팝업 잘림 방지 (기존 유지)
 map.on('popupopen', function(e) {
