@@ -81,7 +81,7 @@ window.copyCoords = (x, y, z) => {
     const text = `${x} ${y} ${z}`; 
     navigator.clipboard.writeText(text).then(() => {
         const toast = document.getElementById('copy-toast');
-        toast.innerText = `좌표 복사 완료: ${text}`; // 어떤 좌표인지 표시해주면 더 친절함!
+        toast.innerText = `복사 완료`; // 어떤 좌표인지 표시해주면 더 친절함!
         toast.style.display = 'block';
         
         // 1.5초 뒤에 사라짐
