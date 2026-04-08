@@ -556,9 +556,45 @@ searchInput.addEventListener('input', function() {
 
 function moveToLocation(target) {
     const targetPos = mcToPx(target.x, target.z);
-    if (target.type !== 'herb') map.flyTo(targetPos, -0.5, { animate: true, duration: 0.5 });
+    
+    // 약초가 아닐 때만 부드럽게 이동
+    if (target.type !== 'herb') {
+        map.flyTo(targetPos, -0.5, { animate: true, duration: 0.5 });
+    }
+
     setTimeout(() => {
-        L.popup().setLatLng(targetPos).setContent(`<div style="text-align:center; font-weight:800;">[${target.category}]<br>${target.name}</div>`).openOn(map);
+        let foundMarker = null;
+
+        // 1. 이미 지도에 있는 마커 찾기 (NPC, 탐색, 상자 등)
+        const allGroups = [layers.spawn, layers.animals, layers.stones, layers.npc, layers.red, layers.pot, layers.box, layers.huntingMarkers];
+        allGroups.forEach(group => {
+            group.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer.getLatLng().equals(targetPos)) {
+                    foundMarker = layer;
+                }
+            });
+        });
+
+        // 2. 마커가 있으면 그 마커를 열고, 없으면 전용 좌표 복사 팝업을 띄움
+        if (foundMarker) {
+            if (!map.hasLayer(foundMarker)) foundMarker.addTo(map);
+            foundMarker.openPopup();
+        } else {
+            // 마커를 못 찾았거나 레이어가 꺼져있을 때 뜨는 좌표 복사 팝업
+            L.popup()
+                .setLatLng(targetPos)
+                .setContent(`
+                    <div style="text-align:center; min-width:180px; color:#000;">
+                        <div style="font-size:16px; font-weight:800; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:8px;">[${target.category}] ${target.name}</div>
+                        <div style="background:#333; color:#FFD700; border-radius:4px; padding:8px; cursor:pointer; font-size:14px; font-weight:700;" 
+                             onclick="copyCoords(${target.x}, ${target.y}, ${target.z})">
+                            ${target.x}, ${target.y}, ${target.z}
+                            <div style="color:#aaa; font-size:10px; font-weight:normal; margin-top:2px;">(클릭하여 좌표 복사)</div>
+                        </div>
+                    </div>
+                `)
+                .openOn(map);
+        }
     }, 600);
 }
 
