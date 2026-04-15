@@ -253,16 +253,16 @@ potItems.forEach((pot) => {
 mysteryBoxes.forEach((box) => {
     const pos = mcToPx(box.x, box.z);
     
-    // ★ 강조하고 싶은 상자의 이름을 여기에 넣으세요!
-    // 예: '의문의 상자(기문부적)', '의문의 상자(1번)' 등...
-    const specialBoxes = ["의문의 상자(기문부적)", "의문의 상자(강화목)", "의문의 상자(진입입구)"]; 
+    // item 내용에 "고급주문서뽑기"가 포함되어 있는지 확인
+    const isSpecialBox = box.item && box.item.includes("고급주문서뽑기");
     
-    let markerClass = "mine-marker"; // 기본 광산 스타일 사각형 사용
-    if (specialBoxes.includes(box.name)) {
-        markerClass += " special-mine"; // 광산과 똑같이 하얗게 번쩍이는 효과 추가
+    // 강조 대상이면 special-mine 효과를, 아니면 기본 사각형(mine-marker) 스타일 적용
+    let markerClass = "mine-marker"; 
+    if (isSpecialBox) {
+        markerClass += " special-mine"; 
     }
 
-    // 아이콘 생성 (광산과 크기를 똑같이 18x18로 맞췄습니다)
+    // 아이콘 생성 (광산과 동일한 18x18 사각형 마커)
     const boxIconDiv = L.divIcon({ 
         className: markerClass, 
         iconSize: [18, 18], 
