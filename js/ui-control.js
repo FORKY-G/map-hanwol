@@ -256,20 +256,27 @@ mysteryBoxes.forEach((box) => {
     // item 내용에 "고급주문서뽑기"가 포함되어 있는지 확인
     const isSpecialBox = box.item && box.item.includes("고급주문서뽑기");
     
-    // 강조 대상이면 special-mine 효과를, 아니면 기본 사각형(mine-marker) 스타일 적용
-    let markerClass = "mine-marker"; 
+    let boxIcon;
+
     if (isSpecialBox) {
-        markerClass += " special-mine"; 
+        // [강조용] box.png 뒤에 special-mine(빛나는 사각형) 효과를 넣은 아이콘
+        boxIcon = L.divIcon({
+            className: 'special-mine', // 광산과 똑같이 빛나는 하얀 사각형 효과
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            html: `<img src="images/box.png" style="width:30px; height:30px; position:absolute; top:3px; left:3px; z-index:10;">`
+        });
+    } else {
+        // [기본] 원래 쓰던 box.png 아이콘
+        boxIcon = L.icon({
+            iconUrl: 'images/box.png',
+            iconSize: [36, 36],
+            iconAnchor: [18, 18],
+            popupAnchor: [0, -15]
+        });
     }
 
-    // 아이콘 생성 (광산과 동일한 18x18 사각형 마커)
-    const boxIconDiv = L.divIcon({ 
-        className: markerClass, 
-        iconSize: [18, 18], 
-        iconAnchor: [9, 9] 
-    });
-
-    const marker = L.marker(pos, { icon: boxIconDiv }).addTo(layers.box);
+    const marker = L.marker(pos, { icon: boxIcon }).addTo(layers.box);
     
     const itemInfo = box.item ? `<div style="margin-bottom:4px;"><span style="color:#666; font-weight:700;">획득아이템:</span> ${box.item}</div>` : '';
     const entranceInfo = box.entrance ? `<div style="margin-top:4px; padding: 4px; background: #fff1f1; border-radius: 4px; border: 1px dashed #d00;"><span style="color:#d00; font-weight:800;">[진입입구]</span><br><span style="font-size:11px; font-weight:700;">${box.entrance}</span></div>` : '';
