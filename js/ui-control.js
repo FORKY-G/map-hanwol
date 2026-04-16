@@ -889,48 +889,53 @@ function renderAccessoryLevels(typeName, levelsData, targetArea) {
     for (const lvKey in levelsData) {
         const lvBtn = document.createElement('div');
         lvBtn.style.cssText = `
-            background: #fff; border: 1px solid #000; padding: 8px 5px;
-            text-align: center; font-weight: 800; cursor: pointer; font-size: 12px;
+            background: #fff; border: 2px solid #000; padding: 12px 5px;
+            text-align: center; font-weight: 800; cursor: pointer; font-size: 13px;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         `;
         lvBtn.innerText = lvKey;
 
         lvBtn.onclick = function() {
             Array.from(lvGrid.children).forEach(btn => btn.style.background = '#fff');
             this.style.background = '#ffd700';
+            
+            // 핵심: 레벨 버튼 클릭 시 아이템 아이콘 그리드를 생성
             renderAccessoryItems(lvKey, levelsData[lvKey], itemShowArea);
         };
         lvGrid.appendChild(lvBtn);
     }
     targetArea.appendChild(lvGrid);
 
+    // 아이템 아이콘들이 나타날 영역
     const itemShowArea = document.createElement('div');
-    itemShowArea.id = 'accessory-item-show-area';
     targetArea.appendChild(itemShowArea);
 }
 
-// [20-5] 최종 장신구 아이템 그리드 (아이콘 + 이름)
+// [20-5] 최종 장신구 아이콘 그리드 (방어구와 동일 로직)
 function renderAccessoryItems(lvTitle, items, targetArea) {
     targetArea.innerHTML = '';
     
+    // 소제목
     const title = document.createElement('div');
     title.style.cssText = 'font-weight:900; background:#eee; padding:5px; margin-top:15px; border-left:4px solid #000; font-size:12px;';
-    title.innerText = `▷ ${lvTitle} 목록`;
+    title.innerText = `▷ ${lvTitle} 상세보기`;
     targetArea.appendChild(title);
 
+    // 아이콘 그리드 (1x5)
     const itemGrid = document.createElement('div');
     itemGrid.style.cssText = 'display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px;';
 
     for (const itemName in items) {
         const itemBox = document.createElement('div');
         itemBox.style.cssText = `
-            border: 1px solid #000; background: #fff; padding: 5px 2px;
-            text-align: center; cursor: pointer; font-size: 10px; font-weight: 800;
+            border: 1px solid #000; background: #fff; padding: 8px 2px;
+            text-align: center; cursor: pointer; font-size: 11px; font-weight: 800;
             display: flex; flex-direction: column; align-items: center; gap: 5px;
         `;
 
-        // 아이콘 (나중에 png 넣을 자리)
+        // 아이콘 자리
         const iconPlaceholder = document.createElement('div');
-        iconPlaceholder.style.cssText = 'width:35px; height:35px; background:#f9f9f9; border:1px solid #ccc; display:flex; align-items:center; justify-content:center;';
+        iconPlaceholder.style.cssText = 'width:40px; height:40px; background:#f4f4f4; border:1px solid #ccc; display:flex; align-items:center; justify-content:center;';
         iconPlaceholder.innerText = 'IMG';
 
         const nameLabel = document.createElement('div');
@@ -939,24 +944,23 @@ function renderAccessoryItems(lvTitle, items, targetArea) {
         itemBox.appendChild(iconPlaceholder);
         itemBox.appendChild(nameLabel);
 
-        // ★ 핵심: 클릭하면 부위 선택 창 없이 바로 'showPartDetail'을 실행해서 스텟을 보여줌
+        // 클릭 시 고정 스펙창 노출
         itemBox.onclick = function() {
             Array.from(itemGrid.children).forEach(child => child.style.background = '#fff');
             this.style.background = '#f1f1f1';
             
-            // parts에 ["스텟"]을 넘기고 isAutoOpen을 true로 설정해서 즉시 노출
+            // showPartDetail을 호출하여 주황색 박스에 스텟 표시 (isAutoOpen=true)
             showPartDetail(itemName, items[itemName], ["스텟"], itemGrid, true);
         };
         itemGrid.appendChild(itemBox);
     }
     targetArea.appendChild(itemGrid);
 
-    // 스텟 정보가 고정되어 나타날 영역
+    // 주황색 스텟창이 들어갈 영역
     const infoArea = document.createElement('div');
     infoArea.className = 'part-detail-area';
     targetArea.appendChild(infoArea);
 }
-
 
 // [21] 팝업 관리 및 제작 아이템 표시
 map.on('popupopen', e => {
