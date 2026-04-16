@@ -802,22 +802,38 @@ function showLevelDetail(level) {
     }
 }
 
-// [20-2] 3단계: 부위별 선택 (1x4 그리드)
+// [20-2] 3단계: 부위별 선택 (1x4 그리드) 수정 버전
 function showPartDetail(itemName, itemData, parts, parentGrid) {
-    // 해당 아이템 그리드 바로 아래에 있는 part-area를 찾음
     const partArea = parentGrid.nextElementSibling;
     partArea.innerHTML = '';
-    partArea.style.cssText = 'margin-top:15px; padding:10px; background:#fafafa; border:1px solid #eee;';
+    // partArea에 position: relative를 주어 기준점을 잡습니다.
+    partArea.style.cssText = 'margin-top:15px; padding:10px; background:#fafafa; border:1px solid #eee; position: relative;';
 
     const partTitle = document.createElement('div');
     partTitle.style.cssText = 'font-size:12px; font-weight:900; margin-bottom:10px; color:#555;';
     partTitle.innerText = `▷ ${itemName} 상세보기`;
     partArea.appendChild(partTitle);
 
+    // 스펙 정보를 표시할 고정창을 미리 하나만 만듭니다.
+    const fixedSpecBox = document.createElement('div');
+    fixedSpecBox.id = 'fixed-spec-box';
+    fixedSpecBox.style.cssText = `
+        display: none; 
+        font-size: 11px; 
+        background: #fff; 
+        padding: 10px; 
+        border: 2px solid #d35400; 
+        margin-top: 10px; 
+        line-height: 1.5;
+        box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+        width: calc(100% - 20px); /* 가로 폭을 그리드에 맞게 고정 */
+        box-sizing: border-box;
+    `;
+    
     const partGrid = document.createElement('div');
     partGrid.style.cssText = `
         display: grid;
-        grid-template-columns: repeat(${parts.length}, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 8px;
     `;
 
@@ -827,33 +843,33 @@ function showPartDetail(itemName, itemData, parts, parentGrid) {
 
         const partIcon = document.createElement('div');
         partIcon.style.cssText = 'width:45px; height:45px; border:2px solid #333; background:#fff; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900;';
-        partIcon.innerText = part; // 나중에 png 교체
-
-        const specBox = document.createElement('div');
-        specBox.style.cssText = 'display:none; font-size:11px; margin-top:8px; text-align:left; background:#fff; padding:5px; border:1px solid #ddd; position:absolute; z-index:100; width:200px; box-shadow:3px 3px 5px rgba(0,0,0,0.1);';
-        
-        const target = (parts[0] === "무기") ? itemData : itemData[part];
-        if (target) {
-            specBox.innerHTML = `
-                <div style="color:#d35400; font-weight:800;">[스텟] ${target.스텟}</div>
-                <div style="color:#7f8c8d;">[일반] ${target.일반}</div>
-            `;
-        }
+        partIcon.innerText = part;
 
         partBox.onclick = (e) => {
             e.stopPropagation();
-            // 다른 스펙창 닫기
-            document.querySelectorAll('.spec-popup').forEach(p => p.style.display = 'none');
-            specBox.style.display = 'block';
-            specBox.classList.add('spec-popup');
+            const target = (parts[0] === "무기") ? itemData : itemData[part];
+            if (target) {
+                // 선택한 부위에 따라 내용만 교체하고 고정창을 보여줍니다.
+                fixedSpecBox.innerHTML = `
+                    <div style="font-weight:900; color:#000; margin-bottom:5px; border-bottom:1px solid #eee;">[${part}] 정보</div>
+                    <div style="color:#d35400; font-weight:800;">[스텟] ${target.스텟}</div>
+                    <div style="color:#7f8c8d;">[일반] ${target.일반}</div>
+                `;
+                fixedSpecBox.style.display = 'block';
+                
+                // 선택된 아이콘 강조 효과
+                Array.from(partGrid.children).forEach(child => child.firstChild.style.borderColor = '#333');
+                partIcon.style.borderColor = '#d35400';
+            }
         };
 
         partBox.appendChild(partIcon);
-        partBox.appendChild(specBox);
         partGrid.appendChild(partBox);
     });
 
     partArea.appendChild(partGrid);
+    partArea.appendChild(fixedSpecBox); // 그리드 바로 아래에 고정창 배치
+}
     
     // 바탕 클릭 시 스펙창 닫기
     document.addEventListener('click', () => {
