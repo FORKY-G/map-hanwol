@@ -832,9 +832,10 @@ function renderAccessoryLevels(typeName, levelsData, targetArea) {
     targetArea.appendChild(itemShowArea);
 }
 
-// [20-5] 장신구 최종 아이콘 그리드
+// [20-5] 장신구 최종 아이콘 그리드 (이걸로 교체하세요!)
 function renderAccessoryItems(lvTitle, items, targetArea) {
-    targetArea.innerHTML = '';
+    targetArea.innerHTML = ''; // 초기화
+    
     const title = document.createElement('div');
     title.style.cssText = 'font-weight:900; background:#eee; padding:5px; margin-top:15px; border-left:4px solid #000; font-size:12px;';
     title.innerText = `▷ ${lvTitle} 목록`;
@@ -842,6 +843,11 @@ function renderAccessoryItems(lvTitle, items, targetArea) {
 
     const itemGrid = document.createElement('div');
     itemGrid.style.cssText = 'display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px;';
+
+    // ★ 정보를 표시할 영역을 그리드 바로 뒤에 생성 (클래스명 중요!)
+    const infoArea = document.createElement('div');
+    infoArea.className = 'part-detail-area-container'; 
+    infoArea.style.cssText = 'min-height: 10px;';
 
     for (const itemName in items) {
         const itemBox = document.createElement('div');
@@ -858,18 +864,19 @@ function renderAccessoryItems(lvTitle, items, targetArea) {
         itemBox.appendChild(nameLabel);
 
         itemBox.onclick = function() {
+            // 선택 효과
             Array.from(itemGrid.children).forEach(child => child.style.background = '#fff');
             this.style.background = '#f1f1f1';
-            // ★ showPartDetail을 호출할 때 itemGrid 바로 뒤의 영역에 그리도록 수정
+            
+            // ★ showPartDetail을 호출 (isAutoOpen=true)
+            // parentGrid(itemGrid) 바로 뒤에 infoArea가 있으므로 정확히 찾아갑니다.
             showPartDetail(itemName, items[itemName], ["스텟"], itemGrid, true);
         };
         itemGrid.appendChild(itemBox);
     }
+    
     targetArea.appendChild(itemGrid);
-
-    const infoArea = document.createElement('div');
-    infoArea.className = 'part-detail-area-container'; // 통일된 클래스명
-    targetArea.appendChild(infoArea);
+    targetArea.appendChild(infoArea); // 그리드 다음에 정보창 영역 배치
 }
 
 // [21] 팝업 관리 및 제작 아이템 표시
