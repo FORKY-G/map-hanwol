@@ -682,13 +682,12 @@ window.toggleBlacksmithWindow = function() {
     }
 };
 
-// [20] 대장장이 데이터를 그리드 형태로 그려주는 함수
+// [20] 1단계: 메인 레벨 선택 (3x2 그리드)
 function renderBlacksmithData() {
     const container = document.getElementById('blacksmith-list-content');
     if (!container) return;
-    container.innerHTML = ''; // 초기화
+    container.innerHTML = ''; 
 
-    // 1. 그리드 컨테이너 생성 (3x2 배열)
     const gridWrapper = document.createElement('div');
     gridWrapper.style.cssText = `
         display: grid;
@@ -697,144 +696,182 @@ function renderBlacksmithData() {
         margin-bottom: 20px;
     `;
 
-    // 2. 각 레벨별 네모 버튼 생성
     for (const level in blacksmithData) {
         const levelBtn = document.createElement('div');
         levelBtn.style.cssText = `
-            background: #fff;
-            border: 2px solid #000;
-            padding: 15px 5px;
-            text-align: center;
-            font-weight: 900;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-            transition: all 0.1s;
+            background: #fff; border: 2px solid #000; padding: 15px 5px;
+            text-align: center; font-weight: 900; cursor: pointer;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
         `;
         levelBtn.innerText = level;
 
-        // 마우스 오버 효과
-        levelBtn.onmouseover = function() { this.style.background = '#f0f0f0'; };
-        levelBtn.onmouseout = function() { 
-            if(this.dataset.selected !== "true") this.style.background = '#fff'; 
-        };
-
-        // 클릭 시 하단에 상세 정보 표시
         levelBtn.onclick = function() {
-            // 모든 버튼 초기화
-            Array.from(gridWrapper.children).forEach(btn => {
-                btn.style.background = '#fff';
-                btn.dataset.selected = "false";
-            });
-            // 선택된 버튼 강조
+            Array.from(gridWrapper.children).forEach(btn => btn.style.background = '#fff');
             this.style.background = '#ffd700';
-            this.dataset.selected = "true";
-            
             showLevelDetail(level);
         };
-
         gridWrapper.appendChild(levelBtn);
     }
-
     container.appendChild(gridWrapper);
 
-    // 3. 상세 내용이 표시될 영역 생성
     const detailContainer = document.createElement('div');
     detailContainer.id = 'blacksmith-detail-area';
     container.appendChild(detailContainer);
 }
 
-// [20-1] 버튼 클릭 시 하단에 리스트를 그려주는 함수
+// [20-1] 2단계: 아이템 선택 (1x5 그리드)
 function showLevelDetail(level) {
     const detailArea = document.getElementById('blacksmith-detail-area');
-    detailArea.innerHTML = ''; // 초기화
+    detailArea.innerHTML = '';
 
     const data = blacksmithData[level];
     
-    // 제목 설정 (제작 단어 삭제)
-    const header = document.createElement('div');
-    header.style.cssText = 'font-weight:900; font-size:16px; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:15px; color:#d00;';
-    header.innerText = `▶ ${level} 리스트`;
-    detailArea.appendChild(header);
-
     for (const category in data) {
         const catData = data[category];
         
         // 분류 제목 (방어구, 무기 등)
         const catTitle = document.createElement('div');
-        catTitle.style.cssText = 'font-weight:900; background:#eee; padding:5px; margin-top:10px; border-left:4px solid #000; font-size:14px;';
+        catTitle.style.cssText = 'font-weight:900; background:#eee; padding:5px; margin-top:15px; border-left:4px solid #000; font-size:13px;';
         catTitle.innerText = `[${category}]`;
         detailArea.appendChild(catTitle);
 
         // 재료 안내
         if (catData.materials) {
             const matInfo = document.createElement('div');
-            matInfo.style.cssText = 'font-size:11px; color:#333; margin:5px 0 10px 5px; font-weight:700; background:#f9f9f9; padding:8px; border:1px solid #ddd; line-height:1.4;';
-            matInfo.innerHTML = `재료: ${catData.materials}<br>주문서 가능 횟수: ${catData.scrollCount}회`;
+            matInfo.style.cssText = 'font-size:11px; color:#333; margin:5px 0; font-weight:700; background:#f9f9f9; padding:8px; border:1px solid #ddd;';
+            matInfo.innerHTML = `필요: ${catData.materials} (주문서 ${catData.scrollCount}회)`;
             detailArea.appendChild(matInfo);
         }
 
-        const items = (level === "장신구") ? catData : catData.items;
-        for (const itemName in items) {
-            if (level === "장신구") {
-                // 장신구(반지/귀걸이) 소제목 처리
-                const subTitle = document.createElement('div');
-                subTitle.style.cssText = 'font-size:12px; font-weight:800; color:#666; margin:10px 0 5px 5px; border-bottom:1px solid #eee;';
-                subTitle.innerText = `▶ ${itemName}`;
-                detailArea.appendChild(subTitle);
+        // 아이템 아이콘 그리드 (1x5)
+        const itemGrid = document.createElement('div');
+        itemGrid.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        `;
 
-                for (const realItem in items[itemName]) {
-                    detailArea.appendChild(createItemUI(realItem, items[itemName][realItem], ["정보"]));
-                }
-            } else {
-                const parts = (category === "방어구") ? ["투구", "갑옷", "허리띠", "신발"] : ["무기"];
-                detailArea.appendChild(createItemUI(itemName, items[itemName], parts));
-            }
+        const items = (level === "장신구") ? catData : catData.items;
+        
+        // 장신구는 구조가 조금 달라서 예외처리 (30제, 70제 등 소제목)
+        if (level === "장신구") {
+             // 장신구는 기존 세로 리스트 방식 유지 혹은 필요시 그리드화
+             // 여기서는 요청하신 '장비' 위주로 그리드화 해드릴게요.
+             renderAccessory(level, catData, detailArea);
+             continue;
         }
+
+        for (const itemName in items) {
+            const itemBox = document.createElement('div');
+            itemBox.style.cssText = `
+                border: 1px solid #000; background: #fff; padding: 5px 2px;
+                text-align: center; cursor: pointer; font-size: 11px; font-weight: 800;
+                display: flex; flex-direction: column; align-items: center; gap: 5px;
+            `;
+
+            // 아이콘 자리 (나중에 png 넣을 곳)
+            const iconPlaceholder = document.createElement('div');
+            iconPlaceholder.style.cssText = 'width:35px; height:35px; background:#eee; border:1px solid #ccc;';
+            iconPlaceholder.innerText = 'IMG'; // 나중에 <img src="..."> 로 교체
+
+            const nameLabel = document.createElement('div');
+            nameLabel.innerText = itemName;
+
+            itemBox.appendChild(iconPlaceholder);
+            itemBox.appendChild(nameLabel);
+
+            // 클릭 시 하단에 부위별 1x4 그리드 표시
+            itemBox.onclick = function() {
+                // 선택 효과
+                Array.from(itemGrid.children).forEach(child => child.style.background = '#fff');
+                this.style.background = '#f1f1f1';
+                
+                const parts = (category === "방어구") ? ["투구", "갑옷", "허리띠", "신발"] : ["무기"];
+                showPartDetail(itemName, items[itemName], parts, itemGrid);
+            };
+
+            itemGrid.appendChild(itemBox);
+        }
+        detailArea.appendChild(itemGrid);
+
+        // 부위별 정보가 뜰 영역
+        const partArea = document.createElement('div');
+        partArea.id = `part-area-${category}`;
+        detailArea.appendChild(partArea);
     }
 }
 
-// [20-2] 아이템 상세 스펙 생성 도우미 함수 (다겸님 기존 로직 유지 및 보정)
-function createItemUI(name, data, parts) {
-    const itemWrapper = document.createElement('div');
-    itemWrapper.style.marginBottom = '5px';
+// [20-2] 3단계: 부위별 선택 (1x4 그리드)
+function showPartDetail(itemName, itemData, parts, parentGrid) {
+    // 해당 아이템 그리드 바로 아래에 있는 part-area를 찾음
+    const partArea = parentGrid.nextElementSibling;
+    partArea.innerHTML = '';
+    partArea.style.cssText = 'margin-top:15px; padding:10px; background:#fafafa; border:1px solid #eee;';
 
-    const itemBtn = document.createElement('div');
-    itemBtn.style.cssText = 'padding:8px; border-bottom:1px solid #eee; cursor:pointer; font-weight:700; font-size:13px; color:#333;';
-    itemBtn.innerText = `· ${name}`;
-    
-    const detailBox = document.createElement('div');
-    detailBox.style.cssText = 'display:none; padding:10px; background:#fff; border:1px solid #ddd; margin-bottom:10px;';
+    const partTitle = document.createElement('div');
+    partTitle.style.cssText = 'font-size:12px; font-weight:900; margin-bottom:10px; color:#555;';
+    partTitle.innerText = `▷ ${itemName} 상세보기`;
+    partArea.appendChild(partTitle);
 
-    itemBtn.onclick = () => detailBox.style.display = (detailBox.style.display === 'block') ? 'none' : 'block';
+    const partGrid = document.createElement('div');
+    partGrid.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(${parts.length}, 1fr);
+        gap: 8px;
+    `;
 
     parts.forEach(part => {
-        const row = document.createElement('div');
-        row.style.marginBottom = '12px';
+        const partBox = document.createElement('div');
+        partBox.style.cssText = 'text-align:center; cursor:pointer;';
 
-        const icon = document.createElement('div');
-        icon.style.cssText = 'width:42px; height:42px; border:2px solid #000; display:inline-flex; align-items:center; justify-content:center; background:#f4f4f4; cursor:pointer; font-size:10px; font-weight:900;';
-        icon.innerText = part;
+        const partIcon = document.createElement('div');
+        partIcon.style.cssText = 'width:45px; height:45px; border:2px solid #333; background:#fff; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900;';
+        partIcon.innerText = part; // 나중에 png 교체
 
-        const spec = document.createElement('div');
-        spec.style.cssText = 'font-size:11px; margin-top:6px; display:none; padding-left:5px; line-height:1.5;';
+        const specBox = document.createElement('div');
+        specBox.style.cssText = 'display:none; font-size:11px; margin-top:8px; text-align:left; background:#fff; padding:5px; border:1px solid #ddd; position:absolute; z-index:100; width:200px; box-shadow:3px 3px 5px rgba(0,0,0,0.1);';
         
-        const target = (parts[0] === "무기" || parts[0] === "정보") ? data : data[part];
-       if (target) {
-    spec.innerHTML = `<div style="color:#d35400; font-weight:800;">[스텟] ${target.스텟}</div>
-                      <div style="color:#7f8c8d;">[일반] ${target.일반}</div>`;
-}
+        const target = (parts[0] === "무기") ? itemData : itemData[part];
+        if (target) {
+            specBox.innerHTML = `
+                <div style="color:#d35400; font-weight:800;">[스텟] ${target.스텟}</div>
+                <div style="color:#7f8c8d;">[일반] ${target.일반}</div>
+            `;
+        }
 
-        icon.onclick = () => spec.style.display = (spec.style.display === 'block') ? 'none' : 'block';
+        partBox.onclick = (e) => {
+            e.stopPropagation();
+            // 다른 스펙창 닫기
+            document.querySelectorAll('.spec-popup').forEach(p => p.style.display = 'none');
+            specBox.style.display = 'block';
+            specBox.classList.add('spec-popup');
+        };
 
-        row.appendChild(icon);
-        row.appendChild(spec);
-        detailBox.appendChild(row);
+        partBox.appendChild(partIcon);
+        partBox.appendChild(specBox);
+        partGrid.appendChild(partBox);
     });
 
-    itemWrapper.appendChild(itemBtn);
-    itemWrapper.appendChild(detailBox);
-    return itemWrapper;
+    partArea.appendChild(partGrid);
+    
+    // 바탕 클릭 시 스펙창 닫기
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.spec-popup').forEach(p => p.style.display = 'none');
+    }, {once: true});
+}
+
+// 장신구 전용 렌더러 (기존 방식 유지)
+function renderAccessory(level, catData, detailArea) {
+    for (const subLevel in catData) {
+        const subTitle = document.createElement('div');
+        subTitle.style.cssText = 'font-size:12px; font-weight:800; color:#666; margin:10px 0 5px 5px;';
+        subTitle.innerText = `▶ ${subLevel}`;
+        detailArea.appendChild(subTitle);
+        for (const realItem in catData[subLevel]) {
+            detailArea.appendChild(createItemUI(realItem, catData[subLevel][realItem], ["정보"]));
+        }
+    }
 }
 
 // [21] 팝업 관리 및 제작 아이템 표시
