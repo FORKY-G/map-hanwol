@@ -851,10 +851,10 @@ function showPartDetail(itemName, itemData, parts, parentGrid, isAutoOpen) {
     partArea.appendChild(fixedSpecBox);
 }
 
-// [20-3] 장신구 전용 렌더러 (2x5 그리드 적용)
+// [20-3] 장신구 전용 렌더러 (이름 표시 오류 수정본)
 function renderAccessory(level, catData, detailArea) {
-    // 반지는 윗줄, 귀걸이는 아랫줄로 표현하기 위해 카테고리 반복
-    for (const subCat in catData) { // subCat: "반지", "귀걸이"
+    // subCat: "반지", "귀걸이"
+    for (const subCat in catData) {
         const catTitle = document.createElement('div');
         catTitle.style.cssText = 'font-weight:900; background:#eee; padding:5px; margin-top:15px; border-left:4px solid #000; font-size:13px;';
         catTitle.innerText = `[${subCat}]`;
@@ -863,15 +863,16 @@ function renderAccessory(level, catData, detailArea) {
         const accessoryGrid = document.createElement('div');
         accessoryGrid.style.cssText = `
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* 5열 배치 */
+            grid-template-columns: repeat(5, 1fr);
             gap: 5px;
             margin-top: 10px;
         `;
 
-        // 반지나 귀걸이 안의 레벨 데이터(30제, 70제 등)를 돌면서 아이템 추출
-        const subData = catData[subCat];
-        for (const subLevel in subData) {
-            for (const itemName in subData[subLevel]) {
+        const subLevels = catData[subCat]; // 30제, 70제 등
+        for (const levelKey in subLevels) {
+            const items = subLevels[levelKey]; // { "금제반지": {스텟...}, ... }
+            
+            for (const itemName in items) {
                 const itemBox = document.createElement('div');
                 itemBox.style.cssText = `
                     border: 1px solid #000; background: #fff; padding: 5px 2px;
@@ -884,19 +885,25 @@ function renderAccessory(level, catData, detailArea) {
                 iconPlaceholder.innerText = 'IMG';
 
                 const nameLabel = document.createElement('div');
-                nameLabel.style.cssText = 'font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;';
-                nameLabel.innerText = itemName;
+                // 글자가 길면 두 줄로 나오거나 작게 보이도록 세팅
+                nameLabel.style.cssText = 'font-size: 10px; line-height:1.1; word-break: keep-all; width: 100%;';
+                nameLabel.innerText = itemName; // ★ 이제 '스텟'이 아니라 아이템 이름이 들어갑니다!
 
                 itemBox.appendChild(iconPlaceholder);
                 itemBox.appendChild(nameLabel);
 
-                // 클릭 시 무기처럼 바로 정보창 오픈
                 itemBox.onclick = function() {
-                    Array.from(accessoryGrid.children).forEach(child => child.style.background = '#fff');
+                    // 모든 장신구 그리드에서 선택 효과 초기화
+                    document.querySelectorAll('#blacksmith-detail-area .grid-selected').forEach(el => {
+                        el.style.background = '#fff';
+                        el.classList.remove('grid-selected');
+                    });
                     this.style.background = '#f1f1f1';
+                    this.classList.add('grid-selected');
                     
-                    // 장신구는 부위가 하나이므로 자동 오픈 모드로 호출 (무기와 동일 로직)
-                    showPartDetail(itemName, subData[subLevel][itemName], ["정보"], accessoryGrid, true);
+                    // 장신구는 부위가 하나이므로 바로 상세 정보 오픈
+                    // accessoryGrid 바로 다음에 생길 partArea를 찾기 위해 부모를 통해 접근합니다.
+                    showPartDetail(itemName, items[itemName], ["정보"], accessoryGrid, true);
                 };
 
                 accessoryGrid.appendChild(itemBox);
@@ -904,9 +911,9 @@ function renderAccessory(level, catData, detailArea) {
         }
         detailArea.appendChild(accessoryGrid);
 
-        // 정보창이 뜰 영역 추가
+        // 정보창이 뜰 영역 (각 카테고리별로 생성)
         const partArea = document.createElement('div');
-        partArea.className = 'part-detail-area'; // id 대신 class로 관리 (반지/귀걸이 각각 필요)
+        partArea.style.cssText = 'min-height: 10px;'; // 영역 확보
         detailArea.appendChild(partArea);
     }
 }
