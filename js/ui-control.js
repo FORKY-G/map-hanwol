@@ -716,16 +716,23 @@ function showPartDetail(itemName, itemData, parts, parentGrid, isAutoOpen) {
         const openSpec = () => {
             const target = (parts[0] === "무기" || parts[0] === "스텟") ? itemData : itemData[part];
             if (target) {
-                // [색상 수정] #ffcc00 -> #d4af37 (차분한 금색)
+                // [수정] [스텟] 머리말 다음에 <br>을 넣어 줄바꿈을 적용합니다.
                 fixedSpecBox.innerHTML = `
-                    <div style="color:#d4af37; font-weight:900; margin-bottom:4px;">[스텟] ${target.스텟}</div>
-                    ${target.일반 ? `<div style="color:#8c837a; font-size:11px;">[일반] ${target.일반}</div>` : ''}
+                    <div style="margin-bottom:8px;">
+                        <div style="color:#d4af37; font-weight:900; font-size:13px;">[스텟]</div>
+                        <div style="color:#eee7c5; font-weight:800; padding-left:4px; margin-top:2px;">${target.스텟}</div>
+                    </div>
+                    ${target.일반 ? `
+                        <div style="border-top:1px solid #3d3129; padding-top:6px;">
+                            <div style="color:#8c837a; font-weight:900; font-size:11px;">[일반]</div>
+                            <div style="color:#b0a59a; padding-left:4px; margin-top:2px; font-size:11px;">${target.일반}</div>
+                        </div>
+                    ` : ''}
                 `;
                 fixedSpecBox.style.display = 'block';
                 
                 if(!isAutoOpen) {
                     Array.from(partGrid.children).forEach(child => child.firstChild.style.borderColor = '#6d5a4a');
-                    // 선택 시 테두리 색상도 차분하게 (#ffd700 -> #b8860b)
                     partIcon.style.borderColor = '#b8860b';
                 }
             }
