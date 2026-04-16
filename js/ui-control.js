@@ -648,11 +648,11 @@ window.renderSkillList = function() {
 
         return `
             <div style="margin-bottom: 20px; border-bottom: 1px solid #3d3129; padding-bottom: 15px;">
-                <div style="font-weight: 900; color: #ffd700; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center;">
-                    <span style="background: #ffd700; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 8px; font-weight:900;">SKILL</span>
+                <div style="font-weight: 900; color: #c5a368; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center;">
+                    <span style="background: #a68b5b; color: #1a1512; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 8px; font-weight:900;">SKILL</span>
                     ${skill.name}
                 </div>
-                <div style="font-size: 12px; color: #ddd; font-weight: 700; line-height: 1.6; word-break: keep-all; padding-left: 2px;">
+                <div style="font-size: 12px; color: #b0a59a; font-weight: 700; line-height: 1.6; word-break: keep-all; padding-left: 2px;">
                     ${skill.info}
                 </div>
                 ${imageTag}
@@ -683,7 +683,7 @@ window.toggleBlacksmithWindow = function() {
     }
 };
 
-// [20] 3단계: 부위별 상세 정보 렌더링 (디자인 통일 버전)
+// [20] 3단계: 부위별 상세 정보 렌더링 (눈이 편안한 버전)
 function showPartDetail(itemName, itemData, parts, parentGrid, isAutoOpen) {
     const partArea = parentGrid.nextElementSibling;
     if (!partArea) return;
@@ -709,21 +709,24 @@ function showPartDetail(itemName, itemData, parts, parentGrid, isAutoOpen) {
         const partBox = document.createElement('div');
         partBox.style.cssText = 'text-align:center; cursor:pointer;';
         const partIcon = document.createElement('div');
-        partIcon.style.cssText = 'width:45px; height:45px; border:2px solid #5e4b3c; background:#2a211a; color:#eee7c5; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900;';
+        // 테두리 색상을 조금 더 차분한 구리색(#6d5a4a)으로 변경
+        partIcon.style.cssText = 'width:45px; height:45px; border:2px solid #6d5a4a; background:#2a211a; color:#eee7c5; margin:0 auto; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900;';
         partIcon.innerText = part;
 
         const openSpec = () => {
             const target = (parts[0] === "무기" || parts[0] === "스텟") ? itemData : itemData[part];
             if (target) {
+                // [색상 수정] #ffcc00 -> #d4af37 (차분한 금색)
                 fixedSpecBox.innerHTML = `
-                    <div style="color:#ffcc00; font-weight:900; margin-bottom:4px;">[스텟] ${target.스텟}</div>
-                    ${target.일반 ? `<div style="color:#aaaaaa; font-size:11px;">[일반] ${target.일반}</div>` : ''}
+                    <div style="color:#d4af37; font-weight:900; margin-bottom:4px;">[스텟] ${target.스텟}</div>
+                    ${target.일반 ? `<div style="color:#8c837a; font-size:11px;">[일반] ${target.일반}</div>` : ''}
                 `;
                 fixedSpecBox.style.display = 'block';
                 
                 if(!isAutoOpen) {
-                    Array.from(partGrid.children).forEach(child => child.firstChild.style.borderColor = '#5e4b3c');
-                    partIcon.style.borderColor = '#ffd700';
+                    Array.from(partGrid.children).forEach(child => child.firstChild.style.borderColor = '#6d5a4a');
+                    // 선택 시 테두리 색상도 차분하게 (#ffd700 -> #b8860b)
+                    partIcon.style.borderColor = '#b8860b';
                 }
             }
         };
