@@ -818,30 +818,34 @@ function showLevelDetail(level) {
         }
 
         const itemGrid = document.createElement('div');
-        // 삐져나가지 않게 gap 조정
-        itemGrid.style.cssText = 'display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 15px;';
+        // [보정] 무기가 삐져나가지 않게 gap을 4px로 줄이고 패딩을 추가했습니다.
+        itemGrid.style.cssText = 'display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 15px; padding: 0 5px;';
 
         for (const itemName in catData.items) {
             const itemContainer = document.createElement('div');
-            itemContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; cursor: pointer;';
+            itemContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 100%;';
 
             if (category === "무기") {
-                // [무기] 아이콘 + 아래 이름
+                // [무기] 아이콘 박스 크기를 48px로 살짝 다이어트 (5개 안 잘리게!)
                 const itemBox = document.createElement('div');
                 itemBox.className = 'game-item-box'; 
+                itemBox.style.cssText = 'width:48px; height:48px; background: radial-gradient(circle, #5e4b3c 0%, #1a1512 100%); border:2px solid #000; display:flex; align-items:center; justify-content:center; position:relative; box-shadow:inset 0 0 8px rgba(0,0,0,0.8);';
                 itemBox.innerHTML = `
-                    <img src="images/${itemName}.png" onerror="this.style.display='none'" style="width:80%; height:80%; object-fit:contain; position:relative; z-index:2;">
-                    <div style="position:absolute; color:#444; font-size:9px; z-index:1;">PNG</div>
+                    <img src="images/${itemName}.png" onerror="this.style.display='none'" style="width:85%; height:85%; object-fit:contain; position:relative; z-index:2;">
+                    <div style="position:absolute; color:#444; font-size:8px; z-index:1;">PNG</div>
                 `;
 
                 const nameLabel = document.createElement('div');
                 nameLabel.className = 'game-item-name';
+                // [보정] 이름표가 옆 칸을 침범하지 않게 너비를 고정했습니다.
+                nameLabel.style.cssText = 'margin-top:6px; font-size:10px; font-weight:900; color:#ffffff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; text-align:center; word-break:keep-all; width:52px;';
                 nameLabel.innerText = itemName;
 
                 itemContainer.appendChild(itemBox);
                 itemContainer.appendChild(nameLabel);
+                
             } else {
-                // [방어구] 텍스트 버튼 (광설, 백비 등)
+                // [방어구] 텍스트 버튼 (기존 유지)
                 const itemBtn = document.createElement('div');
                 itemBtn.className = 'level-btn-style'; 
                 itemBtn.style.cssText = 'padding: 10px 2px; font-size: 11px; width: 100%; min-height: 35px; display: flex; align-items: center; justify-content: center; word-break: keep-all; box-sizing: border-box;';
@@ -850,11 +854,9 @@ function showLevelDetail(level) {
             }
 
             itemContainer.onclick = function() {
-                // 전체 하이라이트 초기화
                 document.querySelectorAll('.game-item-box, .level-btn-style').forEach(el => {
                     el.classList.remove('selected', 'active');
                 });
-                
                 const targetEl = itemContainer.firstChild;
                 targetEl.classList.add(category === "무기" ? 'selected' : 'active');
                 
