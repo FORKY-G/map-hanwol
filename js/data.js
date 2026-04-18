@@ -212,7 +212,7 @@ const npcData = [
 const huntingGrounds = [
     { name: "혈교도", lv: "100", monsters: "혈교도(lv.100)", file: "map15.png", x: -3980, y: 80, z: 2496 },
     { name: "화검문", lv: "90", monsters: "봉원숭이(lv.90), 곤봉원숭이(lv.90)", memo: "*화검문포탈(화검문열쇠) / [히든] 심마니(원숭이 각50마리 사냥)", file: "map16.png", x: -3297, y: 116, z:-1696 },
-    { name: "흑운회", lv: "90", monsters: "흑운회무인(lv.90)", memo: "", file: "map17.png", x: 2461, y: 88, z:-1879 },
+    { name: "흑운회", lv: "90", monsters: "흑운회무인(lv.90)", memo: "몰락한소가주-가문재건", file: "map17.png", x: 2461, y: 88, z:-1879 },
     { name: "경작지", lv: "0~5", monsters: "참새(lv.0), 허수아비(lv.5)", file: "map1.png", x: -960, y: 67, z: -670 },
     { name: "화수원", lv: "10~20", monsters: "다람쥐(lv.10), 흙토끼(lv.15), 백토끼(lv.20)", file: "map2.png", x: -586, y: 90, z: 443 },
     { name: "괴암곡", lv: "25~35", monsters: "하급쥐(lv.25), 중급쥐(lv30), 상급쥐(lv.35)", memo: "*괴암곡제단 : 장로쥐 소환", file: "map3.png", x: 1310, y: 176, z: -1592 },
