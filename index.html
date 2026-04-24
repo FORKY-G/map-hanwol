@@ -12,6 +12,15 @@
 body { margin: 0; padding: 0; background-color: #1a1a1a; font-family: 'Pretendard', sans-serif; overflow: hidden; }
 #map { width: 100vw; height: 100vh; z-index: 1; }
 
+/* [상단 바 스타일] */
+#top-bar-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 65px; 
+    background: rgba(0, 0, 0, 0.85); /* 진한 검정 반투명 */
+    border-bottom: 2px solid #4a3d33;
+    display: flex; align-items: center; justify-content: flex-end; /* 오른쪽 정렬 */
+    padding: 0 20px; box-sizing: border-box; z-index: 2000;
+}
+    
 /* [컨트롤 패널 레이아웃] */
 #controls-wrapper {
 position: fixed; top: 15px; right: 20px; z-index: 1000;
