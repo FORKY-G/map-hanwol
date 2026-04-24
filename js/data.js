@@ -576,3 +576,36 @@ const danData = [
     { name: "금환단", info: "스킬피해량(%) +1", source: "레벨 보상 및 히든 퀘스트", file: "dan15.png" },
     { name: "옥환단", info: "공격력(%) +1", source: "해상포인트", file: "dan16.png" }
 ];
+
+
+   // 곡괭이 제작 재료
+const pickaxeData = [
+    {
+        name: "2성곡괭이",
+        materials: "돌덩어리 5개, 적동괴 1개, 철 1개",
+        rawMaterials: "돌덩어리 6개, 철광석 2개, 적동석 3개",
+        file: "pickaxe2.png",
+        craftFile: "pickaxe2-1.png"
+    },
+    {
+        name: "3성곡괭이",
+        materials: "강철 2개, 자금 2개, 오금철 1개",
+        rawMaterials: "돌덩어리 4개, 철광석 8개, 정철광 2개, 갈옥 4개, 적동석 12개, 청연광 4개, 신선옥 2개, 오철 2개",
+        file: "pickaxe3.png",
+        craftFile: "pickaxe3-1.png"
+    },
+    {
+        name: "4성곡괭이",
+        materials: "무괴철 2개, 백현철 2개, 백련정강 1개, 백련강 2개",
+        rawMaterials: "돌덩어리 10개, 철광석 20개, 갈옥 20개, 정철광 10개, 묵철 6개, 흑옥 5개, 현철 6개, 매화옥 4개, 청강석 3개, 청연광 12개, 신선옥 6개",
+        file: "pickaxe4.png",
+        craftFile: "pickaxe4-1.png"
+    },
+    {
+        name: "5성곡괭이",
+        materials: "설화강철 2개, 설화오금 2개, 오금한철 2개, 백현철 2개",
+        rawMaterials: "돌덩어리 61개, 철광석 122개, 적동석 138개, 오철 30개, 정철광 31개, 갈옥 62개, 청연광 50개, 신선옥 20개, 청강석 12개, 흑옥 12개, 묵철 12개, 현철 6개, 매화옥 13개, 현철 6개, 빙옥 12개, 한철 6개, 금광석 2개",
+        file: "pickaxe5.png",
+        craftFile: "pickaxe5-1.png"
+    }
+];
