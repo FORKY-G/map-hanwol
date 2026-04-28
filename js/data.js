@@ -608,3 +608,13 @@ const pickaxeData = [
         craftFile: "pickaxe5-1.png"
     }
 ];
+
+// 확률 공개표 이미지 데이터
+const probabilityImageData = {
+    "잠재능력 확률": "prob1.png",
+    "추가능력 확률": "prob2.png",
+    "토벌의뢰 아이템 획득 확률": "prob3.png",
+    "대장간 제작대 장비제작 확률": "prob4.png",
+    "우물던전 우물혈석 드랍확률": "prob5.png",
+    "우물던전 아이템 최종 획득 확률": "prob6.png"
+};
