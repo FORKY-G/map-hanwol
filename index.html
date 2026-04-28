@@ -21,7 +21,7 @@ padding-right: 20px; z-index: 1500; border-bottom: 2px solid #5e4b3c; box-sizing
 
 /* [비급/대장장이/영단 정보창 스타일 - 오른쪽 배치 고정] */
 #skill-btn:hover { transform: scale(1.1); }
-#skill-window, #blacksmith-window, #dan-window {
+#skill-window, #blacksmith-window, #dan-window, #prob-window {
 display: none; 
 position: fixed; 
 top: 80px; 
@@ -45,7 +45,7 @@ background: #5e4b3c; border-radius: 10px;
 #skill-window::-webkit-scrollbar-track, #blacksmith-window::-webkit-scrollbar-track, #dan-window::-webkit-scrollbar-track { background: #1a1512; }
 
 /* 제목 표시줄 - 고문서 금색으로 변경 */
-#skill-window > div:first-child, #blacksmith-window > div:first-child, #dan-window > div:first-child {
+#skill-window > div:first-child, #blacksmith-window > div:first-child, #dan-window, #prob-window > div:first-child {
 background: #2a241f !important; 
 border-bottom: 2px solid #4a3d33;
 color: #d4af37 !important; /* 쨍하지 않은 차분한 골드 */
@@ -188,6 +188,14 @@ display: none; z-index: 1002; max-height: 300px; overflow-y: auto;
     </div>
     <div id="blacksmith-list-content" style="padding: 12px;"></div>
 </div> 
+
+<div id="prob-window">
+    <div>
+        <span>확률 정보</span>
+        <span onclick="toggleProbWindow()" style="cursor: pointer; font-size: 18px; color: #fff;">✖</span>
+    </div>
+    <div id="prob-list-content" style="padding: 12px;"></div>
+</div>
 
 <div id="map"></div>
 <div id="copy-toast"><img src="images/forky.png" style="width: 25px; height: 25px;"><span id="toast-text">복사 완료!</span></div>
