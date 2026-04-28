@@ -653,17 +653,22 @@ L.popup()
 }, 600);
 }
 
-// [18] 비급 정보 제어 기능
+
+
+// [18] 비급 정보 제어 기능 (수정: 모든 창 배타적 제어)
 window.toggleSkillWindow = function() {
     const win = document.getElementById('skill-window');
-    const danWin = document.getElementById('dan-window'); // 영단창 추가
+    const danWin = document.getElementById('dan-window');
     const blacksmithWin = document.getElementById('blacksmith-window');
+    const probWin = document.getElementById('prob-window'); // 확률창 추가
     if (!win) return;
 
     if (win.style.display === 'none' || win.style.display === '') {
-        // 다른 창들 닫기
+        // 열려있는 다른 모든 창 닫기
         if (danWin) danWin.style.display = 'none'; 
         if (blacksmithWin) blacksmithWin.style.display = 'none';
+        if (probWin) probWin.style.display = 'none';
+        
         win.style.display = 'block';
         renderSkillList();
     } else {
@@ -692,17 +697,19 @@ window.renderSkillList = function() {
     }).join('');
 };
 
-// [18-2] 영단 정보 제어 기능 (비급이랑 똑같이 신규 추가)
+// [18-2] 영단 정보 제어 기능 (수정: 모든 창 배타적 제어)
 window.toggleDanWindow = function() {
     const win = document.getElementById('dan-window');
     const skillWin = document.getElementById('skill-window');
     const blacksmithWin = document.getElementById('blacksmith-window');
+    const probWin = document.getElementById('prob-window');
     if (!win) return;
 
     if (win.style.display === 'none' || win.style.display === '') {
-        // 다른 창들 닫기
         if (skillWin) skillWin.style.display = 'none';
         if (blacksmithWin) blacksmithWin.style.display = 'none';
+        if (probWin) probWin.style.display = 'none';
+        
         win.style.display = 'block';
         renderDanList();
     } else {
@@ -712,7 +719,7 @@ window.toggleDanWindow = function() {
 
 window.renderDanList = function() {
     const container = document.getElementById('dan-list-content');
-    if (!container || !danData) return; // data.js에 danData가 있어야 함
+    if (!container || !danData) return;
 
     container.innerHTML = danData.map(dan => {
         return `
@@ -732,14 +739,7 @@ window.renderDanList = function() {
     }).join('');
 };
 
-// 버튼 클릭 이벤트 연결
-const skillBtn = document.getElementById('skill-btn');
-if (skillBtn) skillBtn.addEventListener('click', toggleSkillWindow);
-
-const danBtn = document.getElementById('dan-btn');
-if (danBtn) danBtn.addEventListener('click', toggleDanWindow);
-
-// [18-3] 확률 정보 정보창 제어 기능 (기존 창 스타일 맞춤)
+// [18-3] 확률 정보 정보창 제어 기능 (수정: 모든 창 배타적 제어)
 window.toggleProbWindow = function() {
     const win = document.getElementById('prob-window');
     const skillWin = document.getElementById('skill-window');
@@ -749,13 +749,12 @@ window.toggleProbWindow = function() {
     if (!win) return;
 
     if (win.style.display === 'none' || win.style.display === '') {
-        // 다른 창들 닫기
         if (skillWin) skillWin.style.display = 'none';
         if (danWin) danWin.style.display = 'none';
         if (blacksmithWin) blacksmithWin.style.display = 'none';
         
-        win.style.display = 'block'; // flex가 아니라 block으로!
-        renderProbList(); // 리스트 출력
+        win.style.display = 'block';
+        renderProbList();
     } else {
         win.style.display = 'none';
     }
@@ -800,16 +799,19 @@ window.showProbImageDetail = function(cat) {
     document.getElementById('prob-window').scrollTop = 0;
 };
 
-// [19] 대장장이 정보창 토글 (수정: 영단창 닫기 추가)
+// [19] 대장장이 정보창 토글 (수정: 모든 창 배타적 제어)
 window.toggleBlacksmithWindow = function() {
     const win = document.getElementById('blacksmith-window');
     const skillWin = document.getElementById('skill-window');
     const danWin = document.getElementById('dan-window');
+    const probWin = document.getElementById('prob-window');
     if (!win) return;
 
     if (win.style.display === 'none' || win.style.display === '') {
         if (skillWin) skillWin.style.display = 'none';
         if (danWin) danWin.style.display = 'none';
+        if (probWin) probWin.style.display = 'none';
+        
         win.style.display = 'block';
         renderBlacksmithData();
     } else {
