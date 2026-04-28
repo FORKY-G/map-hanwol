@@ -739,7 +739,7 @@ if (skillBtn) skillBtn.addEventListener('click', toggleSkillWindow);
 const danBtn = document.getElementById('dan-btn');
 if (danBtn) danBtn.addEventListener('click', toggleDanWindow);
 
-// [18-3] 확률 정보 정보창 제어 기능 (신규 추가)
+// [18-3] 확률 정보 정보창 제어 기능 (기존 창 스타일 맞춤)
 window.toggleProbWindow = function() {
     const win = document.getElementById('prob-window');
     const skillWin = document.getElementById('skill-window');
@@ -754,56 +754,50 @@ window.toggleProbWindow = function() {
         if (danWin) danWin.style.display = 'none';
         if (blacksmithWin) blacksmithWin.style.display = 'none';
         
-        win.style.display = 'flex'; // 2단 구성을 위해 flex로 표시
-        renderProbMenu();
+        win.style.display = 'block'; // flex가 아니라 block으로!
+        renderProbList(); // 리스트 출력
     } else {
         win.style.display = 'none';
     }
 };
 
-// [18-4] 왼쪽 메뉴 목록 렌더링 (data.js의 probabilityImageData 사용)
-function renderProbMenu() {
-    const container = document.getElementById('prob-menu-content');
+// [18-4] 목록 렌더링 (단일 컨테이너용)
+function renderProbList() {
+    const container = document.getElementById('prob-list-content');
     if (!container) return;
 
-    // data.js에 선언한 데이터의 키값(이름)들을 가져와서 목록 생성
     const categories = Object.keys(probabilityImageData);
     container.innerHTML = categories.map(cat => `
-        <div onclick="showProbImage('${cat}', this)" 
-             style="padding: 15px 12px; border-bottom: 1px solid #3d3129; cursor: pointer; font-size: 13px; font-weight: 800; color: #b0a59a; transition: 0.2s; line-height: 1.4; word-break: keep-all;">
-            ${cat}
+        <div onclick="showProbImageDetail('${cat}')" 
+             style="margin-bottom: 10px; background: #2a241f; border: 1px solid #4a3d33; padding: 15px; border-radius: 4px; cursor: pointer; transition: 0.2s;">
+            <div style="font-weight: 900; color: #d4af37; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+                ${cat}
+                <span style="font-size: 10px; color: #6d5a4a;">▶</span>
+            </div>
         </div>
     `).join('');
 }
 
-// [18-5] 오른쪽 이미지 표시 로직
-window.showProbImage = function(cat, el) {
-    const detailContainer = document.getElementById('prob-detail-content');
-    const imageName = probabilityImageData[cat]; // data.js에서 파일명 매칭
+// [18-5] 상세 이미지 표시 (목록을 지우고 이미지를 띄움)
+window.showProbImageDetail = function(cat) {
+    const container = document.getElementById('prob-list-content');
+    const imageName = probabilityImageData[cat];
 
-    // 메뉴 선택 효과
-    document.querySelectorAll('#prob-menu-content div').forEach(div => {
-        div.style.color = '#b0a59a';
-        div.style.background = 'none';
-        div.style.borderLeft = 'none';
-    });
-    el.style.color = '#d4af37';
-    el.style.background = '#3d3129';
-    el.style.borderLeft = '4px solid #d4af37';
-
-    // 이미지 출력
-    detailContainer.innerHTML = `
-        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 15px; box-sizing: border-box;">
-            <div style="font-weight: 900; color: #d4af37; font-size: 15px; margin-bottom: 15px; width: 100%; text-align: left; border-bottom: 1px solid #4a3d33; padding-bottom: 8px;">
-                 [ ${cat} ]
+    container.innerHTML = `
+        <div style="margin-bottom: 15px;">
+            <button onclick="renderProbList()" style="background: #4a3d33; color: #eee7c5; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-weight: 800; font-size: 11px; margin-bottom: 12px;">
+                ◀ 목록으로 돌아가기
+            </button>
+            <div style="font-weight: 900; color: #d4af37; font-size: 15px; margin-bottom: 10px; border-bottom: 1px solid #3d3129; padding-bottom: 5px;">
+                [ ${cat} ]
             </div>
-            <div style="width: 100%; flex: 1; overflow-y: auto; text-align: center;">
-                <img src="images/${imageName}" 
-                     onerror="this.style.opacity='0.2'; this.src='images/hanwol-icon.png';" 
-                     style="max-width: 100%; border: 1px solid #4a3d33; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
-            </div>
+            <img src="images/${imageName}" 
+                 style="width: 100%; border: 1px solid #4a3d33; box-shadow: 0 0 10px rgba(0,0,0,0.5);"
+                 onerror="this.src='images/hanwol-icon.png'; this.style.opacity='0.3';">
         </div>
     `;
+    // 상세 페이지로 바뀔 때 스크롤 맨 위로 보정
+    document.getElementById('prob-window').scrollTop = 0;
 };
 
 // [19] 대장장이 정보창 토글 (수정: 영단창 닫기 추가)
