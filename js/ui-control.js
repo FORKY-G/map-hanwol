@@ -1,8 +1,8 @@
 // [0] 레이어 그룹 정의 (체크박스 제어용)
 const layers = {
 spawn: L.layerGroup().addTo(map),      // 스폰: 초기 ON
-animals: L.layerGroup(),    // 십이지신: 초기 ON
-stones: L.layerGroup(),                // 나머지는 체크해야 나타남
+animals: L.layerGroup(), 
+stones: L.layerGroup(),     
 npc: L.layerGroup(),
 red: L.layerGroup(),
 pot: L.layerGroup(),
